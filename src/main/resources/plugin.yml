@@ -1,0 +1,23 @@
+name: CoordsBook
+version: ${project.version}
+main: net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin
+api-version: 1.20
+
+commands:
+  coords:
+    description: open coordinates book
+  fasttravel:
+    description: managed by coord book
+  savecoordinate:
+    description: managed by coord book
+    aliases: [savecoord]
+  removecoordinate:
+    description: managed by coord book
+  compasstarget:
+    description: managed by coord book
+  sharecoordinate:
+    description: managed by coord book
+  receivecoordinate:
+    description: managed by coord book
+  denycoordinate:
+    description: managed by coord book
