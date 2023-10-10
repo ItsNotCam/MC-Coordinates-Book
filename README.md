@@ -1,0 +1,1 @@
+# Minecraft 'Coordinates Book' Spigot Plugin
