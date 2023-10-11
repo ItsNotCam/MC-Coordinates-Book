@@ -1,5 +1,7 @@
 # Minecraft 'Coordinates Book' Mod
 
+![image](https://github.com/ItsNotCam/MC-Coordinates-Book/assets/46014191/7bb61efa-4342-4898-8db7-2b19a4bf8006){style="align: center; width: 40vw"} ![image](https://github.com/ItsNotCam/MC-Coordinates-Book/assets/46014191/0957ed56-bb68-4e1d-8582-b9469d0716ab){style="align: center; width: 41vw"}
+
 ## Overview
 This is a multiplayer mod (called a "plugin") for the popular video game **Minecraft**. This mod allows you to save, view, and even share with your friends your favorite locations within the game. It does this all with a sleek user interface that is very responsive and easy to use.
 
