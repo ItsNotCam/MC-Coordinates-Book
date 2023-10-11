@@ -19,10 +19,17 @@ Not only does this take you away from the game by "breaking the fourth wall" of 
 There are a lot of limitations in making multiplayer plugins for the vanilla Minecraft client and server experience. Multiplayer plugins are **not allowed to add any new content to the game**. You are only permitted to **modify what already exists**. As such, plugin creators like myself have to get creative in order to make an experience using only existing assets.
 
 ## Features
+* **Save** your current location to persistent database
+* **Instantly travel** (teleport) to any location you have saved
+* Set your in-game **compass to point** to any location that you have saved
+* **Share** any location you have saved **with any other player** on the server using a **very intuitive interface**
 
-## Tech Stack
+## Technology Used
 * Java
 * NoSQL
-* Minecraft Spigot SDK
+* [Minecraft Spigot SDK](https://www.spigotmc.org)
 
 ## What I Learned
+In making this project, **I learned a lot about Java**. Prior to making this plugin, I was not a big fan of Java and upon seeing that I *had* to use Java, I was a bit put off. But after creating this I can say that **I actually really enjoyed working with Java** to make this. 
+
+Additionally, **I learned about NoSQL databases**. This was my **first exposure to databases**, and I taught myself the fundamentals. The best way to store user data is in a database, and **not every server owner has access to a traditional cloud-based database, or even full access to the physical server** that they run their world on. As such, I had to make use of **NoSQL**, as it **only relies on a single .db file**, rather than a dedicated database application - **this makes it perfect for all users**.
