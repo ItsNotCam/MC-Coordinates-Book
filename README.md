@@ -20,7 +20,7 @@ There are a lot of limitations in making multiplayer plugins for the vanilla Min
 
 ## Features
 When using this plugin you can:
-* **Save** your current location to persistent database
+* **Save** your current location to a persistent database
 * **Instantly travel** (teleport) to any location you have saved
 * Set your in-game **compass to point** to any location that you have saved
 * **Share** any location you have saved **with any other player** on the server using a **very intuitive interface**
@@ -28,11 +28,13 @@ When using this plugin you can:
 ## Technology Used
 **Java and [Minecraft Spigot SDK](https://www.spigotmc.org)**
 
-Java is the language the game client and server are written in, and the Spigot SDK is a third party SDK that allows developers to easily create their own addons and plugins. 
+* Java is the language the game client and server are written in, and the Spigot SDK is a third party SDK that allows developers to easily create their own addons and plugins. 
+
 
 **NoSQL**
 
-Not every server owner has access to a traditional cloud-based database, or even full access to the physical server that they run their world on. As such, I had to make use of **NoSQL**, as it **only relies on a local database file**, rather than a dedicated database application - **this makes it perfect for all users**.
+* Not every server owner has access to a traditional cloud-based database, or even full access to the physical server that they run their world on. 
+* I had to make use of NoSQL, as it **only relies on a local database file**, rather than a dedicated database application - **this makes it perfect for all users**.
 
 ## What I Learned
 In making this project, **I learned a lot about Java**. Prior to making this plugin, I was not a big fan of Java and upon seeing that I *had* to use Java, I was a bit put off. But after creating this I can say that **I actually really enjoyed working with Java** :)
