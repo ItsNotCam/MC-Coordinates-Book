@@ -37,4 +37,4 @@ Not every server owner has access to a traditional cloud-based database, or even
 ## What I Learned
 In making this project, **I learned a lot about Java**. Prior to making this plugin, I was not a big fan of Java and upon seeing that I *had* to use Java, I was a bit put off. But after creating this I can say that **I actually really enjoyed working with Java** :)
 
-Additionally, **I learned about NoSQL databases**. This was my **first exposure to databases**, and I taught myself the fundamentals. The best way to store user data is in a database, and 
+Additionally, **I learned about NoSQL databases**. This was my **first exposure to databases**, and I taught myself the fundamentals.
