@@ -28,12 +28,13 @@ When using this plugin you can:
 ## Technology Used
 **Java and [Minecraft Spigot SDK](https://www.spigotmc.org)**
 
-* Java is the language the game client and server are written in, and the Spigot SDK is a third party SDK that allows developers to easily create their own addons and plugins. 
+* Java is the language the game client and server are written in
+* The Spigot SDK is a third party SDK that allows developers to easily create their own addons and plugins. 
 
 
 **NoSQL**
 
-* Not every server owner has access to a traditional cloud-based database, or even full access to the physical server that they run their world on. 
+* **Not every server owner** has access to a traditional cloud-based database, or even full access to the physical server that they run their world on. 
 * I had to make use of NoSQL, as it **only relies on a local database file**, rather than a dedicated database application - **this makes it perfect for all users**.
 
 ## What I Learned
