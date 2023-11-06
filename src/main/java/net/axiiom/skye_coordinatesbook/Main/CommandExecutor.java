@@ -311,8 +311,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean openBook(Player _player) {
         HashMap<UUID, List<Coordinate>> coords = this.plugin.bookManager.getCoordinates();
-        if(coords.containsKey(_player.getUniqueId()) && coords.get(_player.getUniqueId()).size() > 0)
+        if(coords.containsKey(_player.getUniqueId()) && coords.get(_player.getUniqueId()).size() > 0) {
+            System.out.println("Found player and opening book...");
             return this.plugin.bookManager.openBook(_player);
+        }
 
         _player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "First save a " +
                 "location with" + ChatColor.GOLD + " /savecoord ");

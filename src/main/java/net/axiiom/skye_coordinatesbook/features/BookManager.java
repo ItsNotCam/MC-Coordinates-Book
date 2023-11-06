@@ -4,14 +4,14 @@ import net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin;
 import net.axiiom.skye_coordinatesbook.utilities.BookBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+
 import net.minecraft.network.protocol.Packet;
 import net.minecraft.network.protocol.game.PacketPlayOutOpenBook;
 import net.minecraft.world.EnumHand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-
-import org.bukkit.craftbukkit.v1_20_R1.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BookMeta;
@@ -139,14 +139,9 @@ public class BookManager
         ItemStack old = _player.getInventory().getItem(slot);
         _player.getInventory().setItem(slot, book);
 
-        PacketPlayOutOpenBook packet = new PacketPlayOutOpenBook(EnumHand.a);
-//        PacketPlayOutOpenBook packet = new PacketPlayOutOpenBook(EnumHand.MAIN_HAND);
-
         // idk if this will work lol
         CraftPlayer craftPlayer = (CraftPlayer) _player;
-        craftPlayer.getHandle().c.a(packet);
-
-//        ((CraftPlayer) _player).getHandle().playerConnection.sendPacket(packet);
+        craftPlayer.openBook(book);
 
         _player.getInventory().setItem(slot, old);
         return true;
