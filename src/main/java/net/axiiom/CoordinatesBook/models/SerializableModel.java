@@ -1,4 +1,4 @@
-package net.axiiom.skye_coordinatesbook.models;
+package net.axiiom.CoordinatesBook.models;
 
 import java.io.*;
 import java.util.Base64;

@@ -1,4 +1,4 @@
-package net.axiiom.skye_coordinatesbook.utilities;
+package net.axiiom.CoordinatesBook.utilities;
 
 import de.tr7zw.nbtapi.NBTItem;
 import org.bukkit.inventory.ItemStack;

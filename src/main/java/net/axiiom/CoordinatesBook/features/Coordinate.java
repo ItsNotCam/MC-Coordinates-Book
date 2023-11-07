@@ -1,4 +1,4 @@
-package net.axiiom.skye_coordinatesbook.features;
+package net.axiiom.CoordinatesBook.features;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

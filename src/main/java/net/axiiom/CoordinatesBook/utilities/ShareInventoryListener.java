@@ -1,7 +1,7 @@
-package net.axiiom.skye_coordinatesbook.utilities;
+package net.axiiom.CoordinatesBook.utilities;
 
-import net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin;
-import net.axiiom.skye_coordinatesbook.features.Coordinate;
+import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
+import net.axiiom.CoordinatesBook.features.Coordinate;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -26,7 +26,7 @@ public class ShareInventoryListener implements Listener {
 
     public ShareInventoryListener(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
-        this.userIndexes = new ArrayList(Arrays.asList(new Integer[]{0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48}));
+        this.userIndexes = new ArrayList(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
     }
 
     // Runs when an item is clicked on in the player's inventory. Only runs functionality when the clicked inventory

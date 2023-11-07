@@ -1,4 +1,4 @@
-package net.axiiom.skye_coordinatesbook.utilities;
+package net.axiiom.CoordinatesBook.utilities;
 
 // The queries run on the database
 public enum Queries

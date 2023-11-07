@@ -1,8 +1,8 @@
-package net.axiiom.skye_coordinatesbook.Main;
+package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.skye_coordinatesbook.features.BookManager;
-import net.axiiom.skye_coordinatesbook.utilities.Database;
-import net.axiiom.skye_coordinatesbook.utilities.ShareInventoryListener;
+import net.axiiom.CoordinatesBook.features.BookManager;
+import net.axiiom.CoordinatesBook.utilities.Database;
+import net.axiiom.CoordinatesBook.utilities.ShareInventoryListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -44,7 +44,10 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
     public void onDisable() {
         this.database.commit();
         this.database.disconnect();
-        this.autoSave.cancel();
+
+        if(this.autoSave != null) {
+            this.autoSave.cancel();
+        }
     }
 
     /*
@@ -61,7 +64,7 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         saveConfig();
 
         //Initialize SQLite Database
-        createDirectory();
+//        createDirectory();
         this.database = new Database(this);
         this.database.connect();
 
@@ -81,15 +84,15 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
      */
     private void registerCommands() {
         PluginCommand[] commands = new PluginCommand[] {
-                getCommand("coords"),
-                getCommand("fasttravel"),
-                getCommand("savecoordinate"),
-                getCommand("removecoordinate"),
-                getCommand("compasstarget"),
+            getCommand("coords"),
+            getCommand("fasttravel"),
+            getCommand("savecoordinate"),
+            getCommand("removecoordinate"),
+            getCommand("compasstarget"),
 
-                getCommand("sharecoordinate"),
-                getCommand("receivecoordinate"),
-                getCommand("denycoordinate")
+            getCommand("sharecoordinate"),
+            getCommand("receivecoordinate"),
+            getCommand("denycoordinate")
         };
 
         commandExecutor = new CommandExecutor(this);

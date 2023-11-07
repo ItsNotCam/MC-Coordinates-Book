@@ -1,6 +1,6 @@
-package net.axiiom.skye_coordinatesbook.utilities;
+package net.axiiom.CoordinatesBook.utilities;
 
-import net.axiiom.skye_coordinatesbook.features.Coordinate;
+import net.axiiom.CoordinatesBook.features.Coordinate;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

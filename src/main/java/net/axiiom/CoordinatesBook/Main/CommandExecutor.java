@@ -1,7 +1,7 @@
-package net.axiiom.skye_coordinatesbook.Main;
+package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.skye_coordinatesbook.features.Coordinate;
-import net.axiiom.skye_coordinatesbook.utilities.NBTWrapper;
+import net.axiiom.CoordinatesBook.features.Coordinate;
+import net.axiiom.CoordinatesBook.utilities.NBTWrapper;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;

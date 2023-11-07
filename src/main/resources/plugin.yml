@@ -1,6 +1,6 @@
-name: CoordsBook
-version: ${project.version}
-main: net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin
+name: CoordinatesBook
+version: 1
+main: net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin
 api-version: 1.20
 
 commands:

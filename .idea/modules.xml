@@ -3,6 +3,7 @@
   <component name="ProjectModuleManager">
     <modules>
       <module fileurl="file://$PROJECT_DIR$/../CamEssentials/CamEssentials.iml" filepath="$PROJECT_DIR$/../CamEssentials/CamEssentials.iml" />
+      <module fileurl="file://$PROJECT_DIR$/CoordinatesBook.iml" filepath="$PROJECT_DIR$/CoordinatesBook.iml" />
     </modules>
   </component>
 </project>

@@ -1,7 +1,7 @@
-package net.axiiom.skye_coordinatesbook.features;
+package net.axiiom.CoordinatesBook.features;
 
-import net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin;
-import net.axiiom.skye_coordinatesbook.utilities.BookBuilder;
+import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
+import net.axiiom.CoordinatesBook.utilities.BookBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 

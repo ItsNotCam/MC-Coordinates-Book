@@ -1,9 +1,9 @@
-package net.axiiom.skye_coordinatesbook.utilities;
+package net.axiiom.CoordinatesBook.utilities;
 
-import static net.axiiom.skye_coordinatesbook.utilities.Queries.*;
-import net.axiiom.skye_coordinatesbook.Main.CoordinatesBookPlugin;
-import net.axiiom.skye_coordinatesbook.features.BookManager;
-import net.axiiom.skye_coordinatesbook.features.Coordinate;
+import static net.axiiom.CoordinatesBook.utilities.Queries.*;
+import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
+import net.axiiom.CoordinatesBook.features.BookManager;
+import net.axiiom.CoordinatesBook.features.Coordinate;
 import org.bukkit.Location;
 
 import java.sql.*;
@@ -15,7 +15,7 @@ import java.util.UUID;
 // Interacts with the database that stores player coordinates
 public class Database
 {
-    private final String DB_PATH = "jdbc:sqlite:plugins/CoordsBook/CoordDB.sqlite";
+    private final String DB_PATH = "jdbc:sqlite:plugins/CoordinatesBook/CoordDB.sqlite";
 
     private CoordinatesBookPlugin plugin;
     private Connection connection;
@@ -67,8 +67,8 @@ public class Database
 
         BookManager bookManager = new BookManager(_plugin);
         try {
-            if(!isConnected) throw new SQLException("Not connected to database");
-            else System.out.println("Connected to database");
+            if(!isConnected) throw new SQLException("[Coordinates Book] Failed to connect to database");
+            else System.out.println("[Coordinates Book] Connected to database");
 
             //Gets all tables from database
             ResultSet databaseRS = this.connection.createStatement().executeQuery(GET_ALL_TABLES.query());
