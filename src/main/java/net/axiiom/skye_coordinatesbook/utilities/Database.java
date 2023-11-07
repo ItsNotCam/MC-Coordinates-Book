@@ -15,7 +15,7 @@ import java.util.UUID;
 // Interacts with the database that stores player coordinates
 public class Database
 {
-    private final String DB_PATH = "jdbc:sqlite:plugins/SkyeCoordBook/CoordDB.sqlite";
+    private final String DB_PATH = "jdbc:sqlite:plugins/CoordsBook/CoordDB.sqlite";
 
     private CoordinatesBookPlugin plugin;
     private Connection connection;

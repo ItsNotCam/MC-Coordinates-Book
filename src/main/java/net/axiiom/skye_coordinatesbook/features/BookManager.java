@@ -5,9 +5,6 @@ import net.axiiom.skye_coordinatesbook.utilities.BookBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import net.minecraft.network.protocol.Packet;
-import net.minecraft.network.protocol.game.PacketPlayOutOpenBook;
-import net.minecraft.world.EnumHand;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
@@ -95,9 +92,9 @@ public class BookManager
     public Coordinate getCoordinateByDescription(Player _player, String _description) {
         if(this.coordinatesHash.containsKey(_player.getUniqueId())) {
             List<Coordinate> coordinateList = this.coordinatesHash.get(_player.getUniqueId());
-            for(int i = 0; i < coordinateList.size(); i++) {
-                if(coordinateList.get(i).getDescription().equals(_description)) {
-                    return coordinateList.get(i);
+            for (Coordinate coordinate : coordinateList) {
+                if (coordinate.getDescription().equals(_description)) {
+                    return coordinate;
                 }
             }
         }

@@ -12,4 +12,9 @@
   <component name="McpModuleSettings">
     <option name="srgType" value="SRG" />
   </component>
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <excludeFolder url="file://$MODULE_DIR$/.idea" />
+    </content>
+  </component>
 </module>

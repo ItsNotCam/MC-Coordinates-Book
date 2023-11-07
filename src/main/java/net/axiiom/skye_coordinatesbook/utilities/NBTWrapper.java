@@ -21,9 +21,4 @@ public class NBTWrapper
         NBTItem item = new NBTItem(_itemStack);
         return item.getString(_key);
     }
-
-    public static boolean hasNBTTag(String _key, ItemStack _itemStack) {
-        NBTItem item = new NBTItem(_itemStack);
-        return item.hasTag(_key);
-    }
 }

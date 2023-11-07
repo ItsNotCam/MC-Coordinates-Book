@@ -1,8 +1,8 @@
 <component name="ArtifactManager">
   <artifact type="jar" build-on-make="true" name="CoordinatesBook">
-    <output-path>Q:/Minecraft/VRChatGangMCServerData/VRChatGangMC/plugins</output-path>
+    <output-path>$PROJECT_DIR$/out/artifacts/CoordinatesBook</output-path>
     <root id="archive" name="CoordinatesBook.jar">
-      <element id="module-output" name="coords" />
+      <element id="module-output" name="CoordinatesBook" />
     </root>
   </artifact>
 </component>
