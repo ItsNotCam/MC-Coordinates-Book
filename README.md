@@ -8,6 +8,13 @@ This is a multiplayer mod (called a "plugin") for the popular video game **Minec
 ## Why
 The game is **massive** - each world can be up to **60 million square meters** which is about **five times the diameter of the earth**. As such, it can be difficult to keep track of your favorite locations. 
 
+## Features
+When using this plugin you can:
+* **Save** your current location to a persistent database
+* **Instantly travel** (teleport) to any location you have saved
+* Set your in-game **compass to point** to any location that you have saved
+* **Share** any location you have saved **with any other player** on the server using a **very intuitive interface**
+
 The **traditional** method of saving these locations is to:
 1. Press "f3" to pull up the in-game **debug menu** (yes, the menu used for developers)
 2. **Locate** the three numbers (X, Y, Z coordinates) that define your **player position** 
@@ -17,13 +24,6 @@ Not only does opening the debug menu **"break the fourth wall"**, it also (due t
 
 ## Limitations
 There are a lot of limitations in making multiplayer plugins for the vanilla Minecraft client and server experience. Multiplayer plugins are **not allowed to add any new content to the game**. Plugins are only permitted to **modify what already exists**. As such, plugin creators like myself have to get creative in order to make an experience using only existing assets.
-
-## Features
-When using this plugin you can:
-* **Save** your current location to a persistent database
-* **Instantly travel** (teleport) to any location you have saved
-* Set your in-game **compass to point** to any location that you have saved
-* **Share** any location you have saved **with any other player** on the server using a **very intuitive interface**
 
 ## Technology Used
 **Java and [Minecraft Spigot SDK](https://www.spigotmc.org)**
