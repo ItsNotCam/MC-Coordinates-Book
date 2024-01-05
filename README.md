@@ -5,15 +5,15 @@
 ## Overview
 This is a multiplayer mod (called a "plugin") for the popular video game **Minecraft**. This mod allows you to **save**, **view**, and even **share with your friends** your **favorite locations** within the game. It does this all with a **sleek user interface** that is integrated seamlessly with the rest of the game's interfaces such that **it feels as if it was a standard feature**.
 
-## Why
-The game is **massive** - each world can be up to **60 million square meters** which is about **five times the diameter of the earth**. As such, it can be difficult to keep track of your favorite locations. 
-
 ## Features
 When using this plugin you can:
 * **Save** your current location to a persistent database
 * **Instantly travel** (teleport) to any location you have saved
 * Set your in-game **compass to point** to any location that you have saved
 * **Share** any location you have saved **with any other player** on the server using a **very intuitive interface**
+
+## Why
+The game is **massive** - each world can be up to **60 million square meters** which is about **five times the diameter of the earth**. As such, it can be difficult to keep track of your favorite locations. 
 
 The **traditional** method of saving these locations is to:
 1. Press "f3" to pull up the in-game **debug menu** (yes, the menu used for developers)
