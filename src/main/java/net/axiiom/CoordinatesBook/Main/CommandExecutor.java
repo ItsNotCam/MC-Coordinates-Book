@@ -1,9 +1,8 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import de.tr7zw.nbtapi.NBT;
-import net.axiiom.CoordinatesBook.features.Coordinate;
-import net.axiiom.CoordinatesBook.utilities.NBTTag;
-import net.axiiom.CoordinatesBook.utilities.NBTWrapper;
+import net.axiiom.CoordinatesBook.Coordinate;
+import net.axiiom.CoordinatesBook.Utilities.NBT.NBTTag;
+import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -54,7 +53,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             {
                 case "removecoordinate" :  return removeCoordinate(player,_args);
                 case "compasstarget"    :  return compassTarget(player, _args);
-                case "savecoordinate"   :  return saveCoordinate(player,_args);
+                case "savecoordinate"   :  return createCoordinate(player,_args);
                 case "fasttravel"       :  return fastTravel(player, _args);
                 case "coords"           :  return openBook(player);
                 case "rename"           :  return renameCoordinate(player, _args);
@@ -207,15 +206,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean removeCoordinate(Player _player, String[] _args)
     {
-        if(_args.length == 5 && checkValidRequest(_player.getUniqueId(), _args[0]))
+        if(_args.length == 5)
         {
-            World world = plugin.getServer().getWorld(_args[4]);
-            int x = Integer.parseInt(_args[1]);
-            int y = Integer.parseInt(_args[2]);
-            int z = Integer.parseInt(_args[3]);
-
-            Location location = new Location(world, x, y, z);
-            this.plugin.bookManager.removeCoordinate(_player,location);
+            String uuid = _args[0];
+            this.plugin.bookManager.removeCoordinate(_player, uuid);
             this.plugin.bookManager.openBook(_player);
 
             return true;
@@ -253,20 +247,20 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
 
         Takes in 1 or more arguments that are used as the name of the coordinate
      */
-    private boolean saveCoordinate(Player _player, String[] _args)
+    private boolean createCoordinate(Player _player, String[] _args)
     {
         if(_args.length > 0) {
             /*
                 Gets the description given by the user.
                 Removes the leading and trailing brackets as well as the commas created by the Arrays.toString() method
              */
-            String description = Arrays.toString(_args)
+            String name = Arrays.toString(_args)
                     .substring(1, Arrays.toString(_args).length() - 1)
                     .replaceAll(",", "");
 
             // Creates a new coordinate based on the player's current location and description
-            Coordinate coordinate = new Coordinate(_player.getLocation(), description);
-            boolean successful = this.plugin.bookManager.addCoordinate(_player, coordinate);
+            Coordinate coordinate = new Coordinate(_player.getLocation(), name);
+            boolean successful = this.plugin.bookManager.createCoordinate(_player.getUniqueId(), coordinate);
 
             if(!successful) _player.sendMessage(ChatColor.RED + "You cannot store more than 10 coordinates");
             else _player.sendMessage(ChatColor.GREEN + "Saved new coordinate!\n"
@@ -338,6 +332,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             return false;
         }
 
-        return this.plugin.bookManager.isValidRequest(_player, validatorUUID);
+//        return this.plugin.bookManager.isValidRequest(_player, validatorUUID);
+    return true;
     }
 }

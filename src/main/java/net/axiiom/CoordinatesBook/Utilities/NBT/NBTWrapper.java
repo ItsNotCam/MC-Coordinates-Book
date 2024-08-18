@@ -1,8 +1,6 @@
-package net.axiiom.CoordinatesBook.utilities;
+package net.axiiom.CoordinatesBook.Utilities.NBT;
 
 import de.tr7zw.nbtapi.NBT;
-import de.tr7zw.nbtapi.NBTItem;
-import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.inventory.ItemStack;
 
 /*

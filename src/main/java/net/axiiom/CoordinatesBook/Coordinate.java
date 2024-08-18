@@ -1,8 +1,10 @@
-package net.axiiom.CoordinatesBook.features;
+package net.axiiom.CoordinatesBook;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+
+import java.util.UUID;
 
 /*
     Class representing a coordinate. Contains the information:
@@ -12,34 +14,42 @@ import org.bukkit.World;
  */
 public class Coordinate
 {
+    private String uuid;
     private World world;
-    private String description;
+    private String name;
     private int x;
     private int y;
     private int z;
 
 
     // Construct coordinate from server location
-    public Coordinate(Location _location, String _description) {
+    public Coordinate(Location _location, String _name) {
         this.world = _location.getWorld();
         this.x = _location.getBlockX();
         this.y = _location.getBlockY();
         this.z = _location.getBlockZ();
-
-        this.description = "";
-        for(char c : _description.toCharArray()) {
-            if(c != ';' && c != ',' && c != '&' && c != ':')
-                this.description += c;
-        }
+        this.name = _name;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     // Construct coordinate from inputted position
-    public Coordinate(int _x, int _y, int _z, String _worldName, String _description) {
+    public Coordinate(int _x, int _y, int _z, String _worldName, String _name) {
         this.x = _x;
         this.y = _y;
         this.z = _z;
         this.world = Bukkit.getWorld(_worldName);
-        this.description = _description;
+        this.name = _name;
+        this.uuid = UUID.randomUUID().toString();
+    }
+
+    // Construct coordinate from inputted position
+    public Coordinate(String _uuid, int _x, int _y, int _z, String _worldName, String _name) {
+        this.uuid = _uuid;
+        this.x = _x;
+        this.y = _y;
+        this.z = _z;
+        this.world = Bukkit.getWorld(_worldName);
+        this.name = _name;
     }
 
     public Coordinate(String coord, String _worldName, String _description) {
@@ -48,19 +58,28 @@ public class Coordinate
         this.y = Integer.parseInt(coords[1]);
         this.z = Integer.parseInt(coords[2]);
         this.world = Bukkit.getWorld(_worldName);
-        this.description = _description;
+        this.name = _description;
+        this.uuid = UUID.randomUUID().toString();
     }
 
     public Location getLocation() {
         return new Location(world,x,y,z);
     }
 
-    public String getDescription() {
-        return this.description;
+    public String getName() {
+        return this.name;
     }
 
-    public void setDescription(String _description) {
-        this.description = _description;
+    public void setName(String _description) {
+        this.name = _description;
+    }
+
+    public String getUuid() {
+        return uuid;
+    }
+
+    public void setUuid(String uuid) {
+        this.uuid = uuid;
     }
 
     // This can equal a Coordinate and Location object
@@ -70,7 +89,7 @@ public class Coordinate
             Coordinate input = (Coordinate) _obj;
             boolean sameCoords = input.x == this.x && input.y == this.y && input.z == this.z;
             boolean sameWorld  = input.world.getName().equals(this.world.getName());
-            boolean sameDesc   = input.description.equals(this.description);
+            boolean sameDesc   = input.name.equals(this.name);
 
             return sameCoords && sameDesc && sameWorld;
         }

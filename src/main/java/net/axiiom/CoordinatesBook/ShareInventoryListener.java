@@ -1,7 +1,7 @@
-package net.axiiom.CoordinatesBook.utilities;
+package net.axiiom.CoordinatesBook;
 
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
-import net.axiiom.CoordinatesBook.features.Coordinate;
+import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

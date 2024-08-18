@@ -1,4 +1,4 @@
-package net.axiiom.CoordinatesBook.utilities;
+package net.axiiom.CoordinatesBook.Utilities.NBT;
 
 public class NBTTag {
     public String key;

@@ -1,8 +1,8 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.CoordinatesBook.features.BookManager;
-import net.axiiom.CoordinatesBook.utilities.Database;
-import net.axiiom.CoordinatesBook.utilities.ShareInventoryListener;
+import net.axiiom.CoordinatesBook.BookManager;
+import net.axiiom.CoordinatesBook.Utilities.Database;
+import net.axiiom.CoordinatesBook.ShareInventoryListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitRunnable;
@@ -42,12 +42,11 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
      */
     @Override
     public void onDisable() {
-        this.database.commit();
-        this.database.disconnect();
+        this.database.close();
 
-        if(this.autoSave != null) {
-            this.autoSave.cancel();
-        }
+//        if(this.autoSave != null) {
+//            this.autoSave.cancel();
+//        }
     }
 
     /*
@@ -69,8 +68,7 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         this.database.connect();
 
         //Initialize bookManager
-        this.bookManager = database.pull(this);
-
+        this.bookManager = new BookManager(this);
 
         //initialize listeners
         this.listener = new ShareInventoryListener(this);
