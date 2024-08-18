@@ -1,6 +1,8 @@
 package net.axiiom.CoordinatesBook.utilities;
 
+import de.tr7zw.nbtapi.NBT;
 import de.tr7zw.nbtapi.NBTItem;
+import de.tr7zw.nbtapi.iface.ReadWriteNBT;
 import org.bukkit.inventory.ItemStack;
 
 /*
@@ -9,16 +11,31 @@ import org.bukkit.inventory.ItemStack;
  */
 public class NBTWrapper
 {
-    public static ItemStack setNBTTag(String _tagName, String _value, ItemStack _itemStack)
+    public static void setNBTTag(String _key, String _value, ItemStack _itemStack)
     {
-        NBTItem item = new NBTItem(_itemStack);
-        item.setString(_tagName, _value);
-        return item.getItem();
+        NBT.modify(_itemStack, nbt -> {
+            nbt.setString(_key, _value);
+        });
+    }
+
+    public static void setNBTTag(NBTTag tag, ItemStack _itemStack)
+    {
+        NBT.modify(_itemStack, nbt -> {
+            nbt.setString(tag.getKey(), (String) tag.getValue());
+        });
+    }
+
+    public static void setNBTTags(NBTTag[] tags, ItemStack _itemsStack)
+    {
+        for(NBTTag tag : tags) {
+            setNBTTag(tag, _itemsStack);
+        }
     }
 
     public static String getNBTTag(String _key, ItemStack _itemStack)
     {
-        NBTItem item = new NBTItem(_itemStack);
-        return item.getString(_key);
+        return NBT.get(_itemStack, ok -> {
+            return ok.getString(_key);
+        });
     }
 }

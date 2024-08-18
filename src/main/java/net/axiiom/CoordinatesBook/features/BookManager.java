@@ -8,7 +8,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.Location;
 import org.bukkit.Material;
 
-import org.bukkit.craftbukkit.v1_20_R2.entity.CraftPlayer;
+import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BookMeta;
@@ -129,7 +129,7 @@ public class BookManager
         this.validators.put(_player.getUniqueId(),UUID.randomUUID());
 
         //Create book
-        ItemStack book = createBook(_player.getUniqueId());
+        ItemStack book = createBook(_player);
 
         //Open book
         int slot = _player.getInventory().getHeldItemSlot();
@@ -148,11 +148,12 @@ public class BookManager
     //PRIVATE METHODS
 
     //Create book meta: https://www.spigotmc.org/wiki/interactive-books/#creating-the-book
-    private ItemStack createBook(UUID _playerUUID)
+    private ItemStack createBook(Player player)
     {
+        final UUID uuid = player.getUniqueId();
         ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
 
-        List<Coordinate> coordinateList = this.coordinatesHash.get(_playerUUID);
+        List<Coordinate> coordinateList = this.coordinatesHash.get(uuid);
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
         BookBuilder bb = new BookBuilder();
@@ -160,15 +161,15 @@ public class BookManager
 
         for(Coordinate coordinate : coordinateList)
         {
-            String validatorUUID = this.validators.get(_playerUUID).toString();
+            String validatorUUID = this.validators.get(uuid).toString();
             ComponentBuilder page = bb.buildCoordinatePage(coordinate, validatorUUID);
             pages.add(page.create());
         }
 
         pages.add(0,bb.getTableOfContents().create());
         bookMeta.spigot().setPages(pages);
-        bookMeta.setAuthor("Axii0m");
-        bookMeta.setTitle("Interactive Book");
+        bookMeta.setAuthor(player.getDisplayName());
+        bookMeta.setTitle("Coordinates Book");
 
         book.setItemMeta(bookMeta);
         return book;

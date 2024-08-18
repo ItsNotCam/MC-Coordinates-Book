@@ -95,15 +95,15 @@ public class ShareInventoryListener implements Listener {
 
         // i generated this from a website
         String command = "tellraw " + _targetPlayer.getName() + " [\"\",{\"text\":\"" + _sender.getName() +
-                "\",\"color\":\"aqua\"},{\"text\":\" has sent you their coordinate: \",\"color\":\"none\"" +
-                ",\"bold\":false},{\"text\":\"" + coords + "\",\"color\":\"dark_aqua\"},{\"text\":\"\\nAdd" +
-                " to your coordinate book? \",\"color\":\"none\"},{\"text\":\"yes\",\"color\":\"green\"," +
-                "\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/receiveCoordinate\"}" +
-                ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" +
-                "Add coordinate to your book?\",\"color\":\"aqua\"}]}}},{\"text\":\" / \",\"color\":\"none\"," +
-                "\"bold\":false},{\"text\":\"no\",\"color\":\"red\",\"bold\":true,\"clickEvent\":{\"action\":\"" +
-                "run_command\",\"value\":\"/denyCoordinate\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\"" +
-                ":{\"text\":\"\",\"extra\":[{\"text\":\"Ignore this request\"}]}}}]";
+            "\",\"color\":\"aqua\"},{\"text\":\" has sent you their coordinate: \",\"color\":\"none\"" +
+            ",\"bold\":false},{\"text\":\"" + coords + "\",\"color\":\"dark_aqua\"},{\"text\":\"\\nAdd" +
+            " to your coordinate book? \",\"color\":\"none\"},{\"text\":\"yes\",\"color\":\"green\"," +
+            "\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/receiveCoordinate\"}" +
+            ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" +
+            "Add coordinate to your book?\",\"color\":\"aqua\"}]}}},{\"text\":\" / \",\"color\":\"none\"," +
+            "\"bold\":false},{\"text\":\"no\",\"color\":\"red\",\"bold\":true,\"clickEvent\":{\"action\":\"" +
+            "run_command\",\"value\":\"/denyCoordinate\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\"" +
+            ":{\"text\":\"\",\"extra\":[{\"text\":\"Ignore this request\"}]}}}]";
 
         Bukkit.dispatchCommand(_sender.getServer().getConsoleSender(), command);
         return true;
@@ -111,23 +111,13 @@ public class ShareInventoryListener implements Listener {
 
     // Gets the coordinate from the NBT Tags assigned to the item
     private Coordinate getCoordFromItem(ItemStack _book){
-        String[] coordsArray= NBTWrapper.getNBTTag("coords", _book).split(" ");
-
-        ArrayList<Integer> coords = new ArrayList<>();
-        for (String s : coordsArray)
-            coords.add(Integer.parseInt(s));
-
-        int x = coords.get(0);
-        int y = coords.get(1);
-        int z = coords.get(2);
+        String coords = NBTWrapper.getNBTTag("coords", _book);
         String worldName = NBTWrapper.getNBTTag("worldName",_book);
-
-        return new Coordinate(x,y,z,worldName,"_received_");
+        return new Coordinate(coords,worldName,"_received_");
     }
 
     // Gets the first open slot in the player's currently open inventory
     private int getFirstOpenSlot(Inventory _inventory, boolean _userIndexes) {
-
         if(_userIndexes) {
             for(int index : userIndexes) {
                 ItemStack thisItem = _inventory.getItem(index);

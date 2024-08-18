@@ -1,0 +1,11 @@
+<component name="libraryTable">
+  <library name="spigot-api-1.21.1-R0.1-SNAPSHOT">
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/../BuildTools/1.21/Spigot/Spigot-API/target/spigot-api-1.21.1-R0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../BuildTools/1.21/Spigot/Spigot-Server/target/spigot-1.21.1-R0.1-SNAPSHOT.jar!/" />
+      <root url="jar://$PROJECT_DIR$/../BuildTools/1.21/spigot-1.21.1.jar!/" />
+    </CLASSES>
+    <JAVADOC />
+    <SOURCES />
+  </library>
+</component>

@@ -139,12 +139,12 @@ public class Database
         String tableName = _uuid.toString();
         Location location = _coordinate.getLocation();
         Object[] args = new Object[] {
-                tableName,
-                location.getBlockX(),
-                location.getBlockY(),
-                location.getBlockZ(),
-                location.getWorld().getName(),
-                _coordinate.getDescription()
+            tableName,
+            location.getBlockX(),
+            location.getBlockY(),
+            location.getBlockZ(),
+            location.getWorld().getName(),
+            _coordinate.getDescription()
         };
 
         //queries

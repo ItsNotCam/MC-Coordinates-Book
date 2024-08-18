@@ -42,6 +42,15 @@ public class Coordinate
         this.description = _description;
     }
 
+    public Coordinate(String coord, String _worldName, String _description) {
+        String[] coords = coord.split(" ");
+        this.x = Integer.parseInt(coords[0]);
+        this.y = Integer.parseInt(coords[1]);
+        this.z = Integer.parseInt(coords[2]);
+        this.world = Bukkit.getWorld(_worldName);
+        this.description = _description;
+    }
+
     public Location getLocation() {
         return new Location(world,x,y,z);
     }

@@ -1,7 +1,10 @@
 package net.axiiom.CoordinatesBook.Main;
 
+import de.tr7zw.nbtapi.NBT;
 import net.axiiom.CoordinatesBook.features.Coordinate;
+import net.axiiom.CoordinatesBook.utilities.NBTTag;
 import net.axiiom.CoordinatesBook.utilities.NBTWrapper;
+import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -169,9 +172,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
 
             // Add item containing the coordinate and assign it to inventory slot 49
             ItemStack coord = new ItemStack(Material.BOOK);
-            coord = NBTWrapper.setNBTTag("validatorUUID", validatorUUID, coord);
-            coord = NBTWrapper.setNBTTag("coords",coords,coord);
-            coord = NBTWrapper.setNBTTag("worldName",worldName,coord);
+            NBTWrapper.setNBTTags(new NBTTag[] {
+              new NBTTag("validatorUUID", validatorUUID),
+              new NBTTag("coords", coords),
+              new NBTTag("worldName", worldName)
+            }, coord);
             shareInventory.setItem(49, coord);
 
             // fill remaining slots with nothing

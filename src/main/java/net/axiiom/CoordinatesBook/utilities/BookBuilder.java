@@ -46,7 +46,7 @@ public class BookBuilder
 
         // Generates the command to teleport to this coordinate
         String travelCommand = String.format("/fasttravel %s %s %s", _validatorUUID, location.replaceAll("/", " "), worldName);
-        String travelHover = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "Coming soon!";//"TRAVEL here";
+        String travelHover = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "TRAVEL here";
 
         // Generates the command to set the compass target to this coordinate
         String compassCommand = String.format("/compasstarget %s %s %s", _validatorUUID, location.replaceAll("/"," "), worldName);
@@ -54,7 +54,7 @@ public class BookBuilder
 
         // Generates the command to share the coordinate with another player
         String shareCommand = String.format("/sharecoordinate %s %s %s", _validatorUUID, location.replaceAll("/"," "),worldName); //"/share <validator> <coordinate>";
-        String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "Coming soon!";
+        String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "Share this coordinate";
 
         // Generates the command to delete the coordinate
         String deleteCommand = String.format("/removecoordinate %s %s %s", _validatorUUID, location.replaceAll("/"," "),worldName);
