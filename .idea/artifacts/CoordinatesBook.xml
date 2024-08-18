@@ -1,8 +1,0 @@
-<component name="ArtifactManager">
-  <artifact type="jar" build-on-make="true" name="CoordinatesBook">
-    <output-path>$PROJECT_DIR$/../../Server/1.21/plugins</output-path>
-    <root id="archive" name="CoordinatesBook.jar">
-      <element id="module-output" name="CoordinatesBook" />
-    </root>
-  </artifact>
-</component>
