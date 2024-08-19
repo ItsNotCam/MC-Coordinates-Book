@@ -7,7 +7,7 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 
 public class ENVReader {
-	HashMap<String,String> envHash = new HashMap<>();
+	final HashMap<String,String> envHash = new HashMap<>();
 
 	public ENVReader() {
 		InputStream inputStream = getClass().getClassLoader().getResourceAsStream(".env");

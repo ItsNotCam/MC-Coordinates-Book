@@ -27,7 +27,7 @@ public class Commands {
 	 */
 	public static boolean renameCoordinate(CommandExecutor exec, Player _player, String[] _args) {
 		exec.getPlugin().getLogger().info("Renaming coordinate " + _args[0]);
-		String coordinateUUID = _args[0];
+		final String coordinateUUID = _args[0];
 		Commands.giveWritableBook(exec, _player, coordinateUUID);
 		return true;
 	}
@@ -39,12 +39,12 @@ public class Commands {
 			accept the coordinate or deny it. This handles the accept case.
 	 */
 	public static boolean receiveCoordinate(CommandExecutor exec, Player _player) {
-		if(exec.awaitingShareResponse.containsKey(_player.getUniqueId())) {
-			Coordinate coord = exec.awaitingShareResponse.get(_player.getUniqueId());
+		if(exec.contains(_player.getUniqueId())) {
+			final Coordinate coord = exec.get(_player.getUniqueId());
 			exec.getPlugin().getCoordinateManager().addCoordinate(_player.getUniqueId(), new Coordinate(
 				coord.getLocation(), coord.getName()
 			));
-			exec.awaitingShareResponse.remove(_player.getUniqueId());
+			exec.remove(_player.getUniqueId());
 
 			_player.sendMessage(ChatColor.GREEN + "Saved Coordinate as: " + coord.getName());
 			return true;
@@ -62,8 +62,8 @@ public class Commands {
 			accept the coordinate or deny it. This handles the denial case.
 	 */
 	public static boolean denyCoordinate(CommandExecutor exec, Player _player) {
-		if(exec.awaitingShareResponse.containsKey(_player.getUniqueId())) {
-			exec.awaitingShareResponse.remove(_player.getUniqueId());
+		if(exec.contains(_player.getUniqueId())) {
+			exec.remove(_player.getUniqueId());
 			_player.sendMessage(ChatColor.RED + "Coordinate denied");
 			return true;
 		} else {
@@ -90,7 +90,7 @@ public class Commands {
 
 			// this is the "large chest" inventory size
 			int size = 54;
-			Inventory shareInventory = Bukkit.createInventory(null, size, "Share Your Coordinate");
+			final Inventory shareInventory = Bukkit.createInventory(null, size, "Share Your Coordinate");
 
 			//fill spacer slots
 			ArrayList<Integer> spacerSlots = new ArrayList<>();
@@ -103,12 +103,12 @@ public class Commands {
 					Fill empty spaces with player heads.
 					When a player head is clicked, the coordinate is sent
 			 */
-			Object[] players = exec.getPlugin().getServer().getOnlinePlayers().toArray();
-			ArrayList<Integer> userIndexes = new ArrayList<>(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
+			final Object[] players = exec.getPlugin().getServer().getOnlinePlayers().toArray();
+			final ArrayList<Integer> userIndexes = new ArrayList<>(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
 			for(int i = 0, playersIndex = 0; i < size && playersIndex < players.length; i++) {
 				if(!userIndexes.contains(i) && !spacerSlots.contains(i)) {
-					Player player = (Player) players[playersIndex];
-					ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
+					final Player player = (Player) players[playersIndex];
+					final ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
 
 					SkullMeta skullMeta = (SkullMeta) playerHead.getItemMeta();
 					if(skullMeta == null) { continue; }
@@ -178,10 +178,9 @@ public class Commands {
 	{
 		if(_args.length == 1)
 		{
-			String uuid = _args[0];
+			final String uuid = _args[0];
 			exec.getPlugin().getLogger().info(uuid);
 			exec.getPlugin().getCoordinateManager().removeCoordinate(_player, uuid);
-//            this.plugin.getCoordinateManager().openBook(_player);
 			return true;
 		}
 
@@ -195,11 +194,11 @@ public class Commands {
 	{
 		if(_args.length == 4)
 		{
-			boolean sameWorld = _player.getWorld().getName().equals(_args[3]);
+			final boolean sameWorld = _player.getWorld().getName().equals(_args[3]);
 			if(sameWorld) {
-				int x = Integer.parseInt(_args[0]);
-				int y = Integer.parseInt(_args[1]);
-				int z = Integer.parseInt(_args[2]);
+				final int x = Integer.parseInt(_args[0]);
+				final int y = Integer.parseInt(_args[1]);
+				final int z = Integer.parseInt(_args[2]);
 				_player.setCompassTarget(new Location(_player.getWorld(),x,y,z));
 				return true;
 			}
@@ -229,8 +228,8 @@ public class Commands {
 		String name = String.join(" ", _args);
 
 		// Creates a new coordinate based on the player's current location and description
-		Coordinate coordinate = new Coordinate(_player.getLocation(), name);
-		boolean successful = exec.getPlugin().getCoordinateManager().createCoordinate(_player.getUniqueId(), coordinate);
+		final Coordinate coordinate = new Coordinate(_player.getLocation(), name);
+		final boolean successful = exec.getPlugin().getCoordinateManager().createCoordinate(_player.getUniqueId(), coordinate);
 
 		if(successful) {
 			_player.sendMessage(ChatColor.GREEN + "Saved new coordinate!\n"
@@ -259,11 +258,11 @@ public class Commands {
 			return false;
 		}
 
-		World world = exec.getPlugin().getServer().getWorld(_args[3]);
-		int x = Integer.parseInt(_args[0]);
-		int y = Integer.parseInt(_args[1]);
-		int z = Integer.parseInt(_args[2]);
-		Location tpLocation = new Location(world, x, y, z);
+		final World world = exec.getPlugin().getServer().getWorld(_args[3]);
+		final int x = Integer.parseInt(_args[0]);
+		final int y = Integer.parseInt(_args[1]);
+		final int z = Integer.parseInt(_args[2]);
+		final Location tpLocation = new Location(world, x, y, z);
 
 		_player.teleport(tpLocation);
 		return true;
@@ -309,9 +308,9 @@ public class Commands {
 		}
 
 		// Get the player's inventory and the currently held item
-		Inventory inventory = _player.getInventory();
+		final Inventory inventory = _player.getInventory();
 		int slot = _player.getInventory().getHeldItemSlot();
-		ItemStack heldItem = inventory.getItem(slot);
+		final ItemStack heldItem = inventory.getItem(slot);
 
 		// Check if the player's inventory has room for the currently held item
 		if (heldItem != null && !heldItem.getType().equals(Material.AIR)) {

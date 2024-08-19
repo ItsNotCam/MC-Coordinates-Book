@@ -18,11 +18,11 @@ public class BookBuilder
     public static ComponentBuilder buildCoordinatePage(Coordinate _coordinate)
     {
         // Get Location information: World, X, Y, Z
-        String coordinateUuid = _coordinate.getUuid();
-        Location coordinateLocation = _coordinate.getLocation();
-        String worldName = Objects.requireNonNull(coordinateLocation.getWorld()).getName();
-        String dimension = _coordinate.getWorldName();
-        String location = coordinateLocation.getBlockX() + " " + coordinateLocation.getBlockY() + " " + coordinateLocation.getBlockZ();
+        final String coordinateUuid = _coordinate.getUuid();
+        final Location coordinateLocation = _coordinate.getLocation();
+        final String worldName = Objects.requireNonNull(coordinateLocation.getWorld()).getName();
+        final String dimension = _coordinate.getWorldName();
+        final String location = coordinateLocation.getBlockX() + " " + coordinateLocation.getBlockY() + " " + coordinateLocation.getBlockZ();
 
         /*
             The following lines generate all the commands to be input into the book.
@@ -30,28 +30,28 @@ public class BookBuilder
          */
 
         // Gets the coordinate name and truncates it to the maximum number of characters that can be seen on a single line in the game
-        String coordName = _coordinate.getName().trim();
-        String coordNameTrunc = truncate(coordName,19);
+        final String coordName = _coordinate.getName().trim();
+        final String coordNameTrunc = truncate(coordName,19);
 
         // Generates the command to teleport to this coordinate
-        String travelCommand = String.format("/fasttravel %s %s", location, worldName);
-        String travelHover = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "TRAVEL here";
+        final String travelCommand = String.format("/fasttravel %s %s", location, worldName);
+        final String travelHover = ChatColor.DARK_GREEN + "" + ChatColor.BOLD + "TRAVEL here";
 
         // Generates the command to set the compass target to this coordinate
-        String compassCommand = String.format("/compasstarget %s %s", location, worldName);
-        String compassHover = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "SET your compass target";
+        final String compassCommand = String.format("/compasstarget %s %s", location, worldName);
+        final String compassHover = ChatColor.LIGHT_PURPLE + "" + ChatColor.BOLD + "SET your compass target";
 
         // Generates the command to share the coordinate with another player
-        String shareCommand = String.format("/sharecoordinate %s", coordinateUuid);
-        String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "SHARE this coordinate";
+        final String shareCommand = String.format("/sharecoordinate %s", coordinateUuid);
+        final String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "SHARE this coordinate";
 
         // Generates the command to delete the coordinate
-        String deleteCommand = String.format("/removecoordinate %s", coordinateUuid);
-        String deleteHover = String.format(ChatColor.RED + "" + ChatColor.BOLD + "DELETE this coordinate");
+        final String deleteCommand = String.format("/removecoordinate %s", coordinateUuid);
+        final String deleteHover = String.format(ChatColor.RED + "" + ChatColor.BOLD + "DELETE this coordinate");
 
         // Generates the command to delete the coordinate
-        String renameCommand = String.format("/renamecoordinate %s", coordinateUuid);
-        String renameHover = String.format(ChatColor.GOLD + "" + ChatColor.BOLD + "RENAME this coordinate");
+        final String renameCommand = String.format("/renamecoordinate %s", coordinateUuid);
+        final String renameHover = String.format(ChatColor.GOLD + "" + ChatColor.BOLD + "RENAME this coordinate");
 
         // This is a Spigot API defined class that builds text with embedded commands
         ComponentBuilder page = new ComponentBuilder(coordNameTrunc + "\n\n");

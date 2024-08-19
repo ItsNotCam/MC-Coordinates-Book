@@ -1,20 +1,10 @@
 package net.axiiom.CoordinatesBook.Main;
 
 import net.axiiom.CoordinatesBook.Coordinate;
-import net.axiiom.CoordinatesBook.Utilities.NBT.NBTTag;
-import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
-import net.md_5.bungee.api.ChatColor;
-import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.Inventory;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.BookMeta;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
 
-import java.sql.SQLException;
 import java.util.*;
 
 import static net.axiiom.CoordinatesBook.Main.Commands.*;
@@ -35,12 +25,28 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         The list of players that have been sent coordinates. This is modified when a player accepts or denies
         a sent coordinate.
      */
-    public HashMap<UUID, Coordinate> awaitingShareResponse;
+    private final HashMap<UUID, Coordinate> awaitingShareResponse;
 
     // Initialize
     public CommandExecutor(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
         this.awaitingShareResponse = new HashMap<>();
+    }
+
+    public void add(UUID key, Coordinate value) {
+        awaitingShareResponse.put(key, value);
+    }
+
+    public Coordinate get(UUID key) {
+        return awaitingShareResponse.get(key);
+    }
+
+    public boolean contains(UUID key) {
+        return awaitingShareResponse.containsKey(key);
+    }
+
+    public void remove(UUID key) {
+        awaitingShareResponse.remove(key);
     }
 
     /*
@@ -58,7 +64,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         if(!(_sender instanceof Player))
             return false;
 
-        Player player = (Player) _sender;
+        final Player player = (Player) _sender;
         plugin.getLogger().info("Command: " + _command.getName());
         switch(_command.getName())
         {

@@ -14,12 +14,12 @@ import java.util.UUID;
  */
 public class Coordinate
 {
-    private String uuid;
-    private World world;
+    private final String uuid;
+    private final World world;
     private String name;
-    private int x;
-    private int y;
-    private int z;
+    private final int x;
+    private final int y;
+    private final int z;
 
     // Construct coordinate from server location
     public Coordinate(Location _location, String _name) {

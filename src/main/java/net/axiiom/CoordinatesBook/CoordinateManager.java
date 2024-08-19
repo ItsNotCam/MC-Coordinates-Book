@@ -32,7 +32,7 @@ public class CoordinateManager
             return this.playerCoordinateMap.get(_player.getUniqueId());
         } else {
             try {
-                List<Coordinate> coordinates = this.plugin.getDatabase().getPlayerCoordinates(_player.getUniqueId());
+                final List<Coordinate> coordinates = this.plugin.getDatabase().getPlayerCoordinates(_player.getUniqueId());
                 this.playerCoordinateMap.put(_player.getUniqueId(), coordinates);
                 return coordinates;
             } catch(SQLException e) {
@@ -65,8 +65,8 @@ public class CoordinateManager
 
     public boolean createCoordinate(UUID _playerUUID, Coordinate _coordinate) {
         List<Coordinate> coordinateList = (this.playerCoordinateMap.containsKey(_playerUUID))
-                ? this.playerCoordinateMap.get(_playerUUID)
-                : new ArrayList<>();
+            ? this.playerCoordinateMap.get(_playerUUID)
+            : new ArrayList<>();
 
         if(!coordinateList.contains(_coordinate))
         {
@@ -145,7 +145,7 @@ public class CoordinateManager
     public boolean changeCoordinateName(Player _player, String _coordinateUUID, String _newName) {
         Coordinate coordinate = getCoordinateByUUID(_coordinateUUID);
         if(coordinate != null) {
-            List<Coordinate> coordinateList = playerCoordinateMap.get(_player.getUniqueId());
+            final List<Coordinate> coordinateList = playerCoordinateMap.get(_player.getUniqueId());
             for(Coordinate coord : coordinateList) {
                 if(coord.equals(coordinate)) {
                     coord.setName(_newName);
@@ -165,7 +165,7 @@ public class CoordinateManager
     public boolean renameCoordinate(Player _player, String _coordinateUUID, String _newName) {
         try {
             plugin.getDatabase().renameCoordinate(_player, _coordinateUUID, _newName);
-            List<Coordinate> coordinates = this.playerCoordinateMap.get(_player.getUniqueId());
+            final List<Coordinate> coordinates = this.playerCoordinateMap.get(_player.getUniqueId());
             for(Coordinate coordinate : coordinates) {
                 if(coordinate.getUuid().equals(_coordinateUUID)) {
                     coordinate.setName(_newName);
@@ -186,11 +186,11 @@ public class CoordinateManager
         ItemStack book = createBook(getCoordinates(_player));
 
         //Open book
-        int slot = _player.getInventory().getHeldItemSlot();
-        ItemStack old = _player.getInventory().getItem(slot);
+        final int slot = _player.getInventory().getHeldItemSlot();
+        final ItemStack old = _player.getInventory().getItem(slot);
         _player.getInventory().setItem(slot, book);
 
-        CraftPlayer craftPlayer = (CraftPlayer) _player;
+        final CraftPlayer craftPlayer = (CraftPlayer) _player;
         craftPlayer.openBook(book);
 
         _player.getInventory().setItem(slot, old);
@@ -206,10 +206,7 @@ public class CoordinateManager
         List<BaseComponent[]> pages = new ArrayList<>();
         pages.add(BookBuilder.getTableOfContents(coordinates).create());
 
-        for(Coordinate coordinate : coordinates) {
-            ComponentBuilder page = BookBuilder.buildCoordinatePage(coordinate);
-            pages.add(page.create());
-        }
+        coordinates.forEach(coordinate -> pages.add(BookBuilder.buildCoordinatePage(coordinate).create()));
 
         if(bookMeta != null) {
             bookMeta.spigot().setPages(pages);
