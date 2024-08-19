@@ -17,8 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 //TODO: ADD ENDER DRAGON:
 // Custom Mob AI Guide -> https://www.spigotmc.org/threads/tutorial-creating-custom-entities-with-pathfindergoals.18519/
 public final class CoordinatesBookPlugin extends JavaPlugin {
-	public CommandExecutor commandExecutor;
-
+	  private CommandHandler commandHandler;
     private Database database;
     private CoordinateManager coordinateManager;
 
@@ -88,10 +87,10 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
             getCommand("denycoordinate")
         };
 
-        commandExecutor = new CommandExecutor(this);
+        commandHandler = new CommandHandler(this);
         for (PluginCommand command : commands) {
 					assert command != null;
-					command.setExecutor(commandExecutor);
+					command.setExecutor(commandHandler);
 				}
     }
 
@@ -101,5 +100,9 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
 
     public CoordinateManager getCoordinateManager() {
         return coordinateManager;
+    }
+
+    public CommandHandler getCommandHandler() {
+        return commandHandler;
     }
 }

@@ -13,7 +13,7 @@ import static net.axiiom.CoordinatesBook.Main.Commands.*;
     This class listens to the chat for any commands that match those declared in the plugin.
     When it receives a matching command, it will execute their corresponding functionality
  */
-public class CommandExecutor implements org.bukkit.command.CommandExecutor
+public class CommandHandler implements org.bukkit.command.CommandExecutor
 {
     private final CoordinatesBookPlugin plugin;
 
@@ -28,12 +28,12 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
     private final HashMap<UUID, Coordinate> awaitingShareResponse;
 
     // Initialize
-    public CommandExecutor(CoordinatesBookPlugin _plugin) {
+    public CommandHandler(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
         this.awaitingShareResponse = new HashMap<>();
     }
 
-    public void add(UUID key, Coordinate value) {
+    public void put(UUID key, Coordinate value) {
         awaitingShareResponse.put(key, value);
     }
 

@@ -20,12 +20,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 public class Commands {
-
 	/*
 			Renames the coordinate of the player.
 			Takes in the old description and the new description and replaces it
 	 */
-	public static boolean renameCoordinate(CommandExecutor exec, Player _player, String[] _args) {
+	public static boolean renameCoordinate(CommandHandler exec, Player _player, String[] _args) {
 		exec.getPlugin().getLogger().info("Renaming coordinate " + _args[0]);
 		final String coordinateUUID = _args[0];
 		Commands.giveWritableBook(exec, _player, coordinateUUID);
@@ -38,7 +37,7 @@ public class Commands {
 			When a player sends a coordinate to another player, they are presented with a dialog in which they can
 			accept the coordinate or deny it. This handles the accept case.
 	 */
-	public static boolean receiveCoordinate(CommandExecutor exec, Player _player) {
+	public static boolean receiveCoordinate(CommandHandler exec, Player _player) {
 		if(exec.contains(_player.getUniqueId())) {
 			final Coordinate coord = exec.get(_player.getUniqueId());
 			exec.getPlugin().getCoordinateManager().addCoordinate(_player.getUniqueId(), new Coordinate(
@@ -61,7 +60,7 @@ public class Commands {
 			When a player sends a coordinate to another player, they are presented with a dialog in which they can
 			accept the coordinate or deny it. This handles the denial case.
 	 */
-	public static boolean denyCoordinate(CommandExecutor exec, Player _player) {
+	public static boolean denyCoordinate(CommandHandler exec, Player _player) {
 		if(exec.contains(_player.getUniqueId())) {
 			exec.remove(_player.getUniqueId());
 			_player.sendMessage(ChatColor.RED + "Coordinate denied");
@@ -84,7 +83,7 @@ public class Commands {
 			* Y coordinate component
 			* Z coordinate component
 	 */
-	public static boolean shareCoordinate(CommandExecutor exec, Player _player, String[] _args) {
+	public static boolean shareCoordinate(CommandHandler exec, Player _player, String[] _args) {
 		if(_args.length == 1) {
 			String coordUUid = _args[0];
 
@@ -174,7 +173,7 @@ public class Commands {
 
 			Returns a boolean indicating if the book was successfully removed
 	 */
-	public static boolean removeCoordinate(CommandExecutor exec, Player _player, String[] _args)
+	public static boolean removeCoordinate(CommandHandler exec, Player _player, String[] _args)
 	{
 		if(_args.length == 1)
 		{
@@ -216,7 +215,7 @@ public class Commands {
 
 			Takes in 1 or more arguments that are used as the name of the coordinate
 	 */
-	public static boolean createCoordinate(CommandExecutor exec, Player _player, String[] _args)
+	public static boolean createCoordinate(CommandHandler exec, Player _player, String[] _args)
 	{
 		if(_args.length < 1) {
 			_player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC
@@ -252,7 +251,7 @@ public class Commands {
 			* Y coordinate component
 			* Z coordinate component
 	 */
-	public static boolean fastTravel(CommandExecutor exec, Player _player, String[] _args)
+	public static boolean fastTravel(CommandHandler exec, Player _player, String[] _args)
 	{
 		if(_args.length != 4) {
 			return false;
@@ -272,7 +271,7 @@ public class Commands {
 			Generates a book, fills it with the coordinates that of the player, and forecfully opens
 			it on the client side
 	 */
-	public static boolean openBook(CommandExecutor exec, Player _player) {
+	public static boolean openBook(CommandHandler exec, Player _player) {
 		final boolean opened = exec.getPlugin().getCoordinateManager().openBook(_player);
 		if(!opened) {
 			_player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "First save a " +
@@ -282,7 +281,7 @@ public class Commands {
 		return opened;
 	}
 
-	public static void giveWritableBook(CommandExecutor exec, Player _player, String coordinateUUID) {
+	public static void giveWritableBook(CommandHandler exec, Player _player, String coordinateUUID) {
 		String coordinateName = exec.getPlugin().getCoordinateManager().getCoordinateByUUID(_player, coordinateUUID).getName();
 
 		// Create a writable book item stack

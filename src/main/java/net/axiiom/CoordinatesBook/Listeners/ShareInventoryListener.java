@@ -113,7 +113,8 @@ public class ShareInventoryListener implements Listener {
        The player simply clicks on "yes" or "no" to accept or deny the request
     */
     private void sendShareCoordinateMessage(Coordinate _coordinate, Player _targetPlayer, Player _sender) {
-        plugin.commandExecutor.awaitingShareResponse.put(_targetPlayer.getUniqueId(), _coordinate);
+        plugin.getCommandHandler().put(_targetPlayer.getUniqueId(), _coordinate);
+
         Location location = _coordinate.getLocation();
         String coords = String.format("%s/%s/%s", location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
