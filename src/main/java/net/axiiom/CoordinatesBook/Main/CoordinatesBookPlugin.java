@@ -1,6 +1,6 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.CoordinatesBook.BookManager;
+import net.axiiom.CoordinatesBook.CoordinateManager;
 import net.axiiom.CoordinatesBook.Utilities.Database;
 import net.axiiom.CoordinatesBook.ShareInventoryListener;
 import org.bukkit.command.PluginCommand;
@@ -16,12 +16,10 @@ import org.bukkit.plugin.java.JavaPlugin;
 //TODO: ADD ENDER DRAGON:
 // Custom Mob AI Guide -> https://www.spigotmc.org/threads/tutorial-creating-custom-entities-with-pathfindergoals.18519/
 public final class CoordinatesBookPlugin extends JavaPlugin {
-    private ShareInventoryListener listener;
+	public CommandExecutor commandExecutor;
 
-    public CommandExecutor commandExecutor;
-
-    Database database;
-    BookManager bookManager;
+    private Database database;
+    private CoordinateManager coordinateManager;
 
     /*
         Override onEnable behavior from superclass - this registers the commands that the
@@ -63,10 +61,10 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         this.database.connect();
 
         //Initialize bookManager
-        this.bookManager = new BookManager(this);
+        this.coordinateManager = new CoordinateManager(this);
 
         //initialize listeners
-        this.listener = new ShareInventoryListener(this);
+			ShareInventoryListener listener = new ShareInventoryListener(this);
         this.getServer().getPluginManager().registerEvents(listener, this);
     }
 
@@ -99,16 +97,7 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         return database;
     }
 
-    public void setDatabase(Database database) {
-        this.database = database;
+    public CoordinateManager getCoordinateManager() {
+        return coordinateManager;
     }
-
-    public BookManager getBookManager() {
-        return bookManager;
-    }
-
-    public void setBookManager(BookManager bookManager) {
-        this.bookManager = bookManager;
-    }
-
 }

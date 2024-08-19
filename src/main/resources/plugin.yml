@@ -10,7 +10,7 @@ commands:
     description: managed by coord book
   savecoordinate:
     description: managed by coord book
-    aliases: [savecoord]
+    aliases: [savecoord, sc]
   removecoordinate:
     description: managed by coord book
   compasstarget:

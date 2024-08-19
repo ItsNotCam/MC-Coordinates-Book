@@ -16,23 +16,15 @@ import java.util.*;
 
 // Class responsible for all of the book generation and modification
 
-public class BookManager
+public class CoordinateManager
 {
-    private CoordinatesBookPlugin plugin;
+    private final CoordinatesBookPlugin plugin;
     // Maps the UUID of the player to a list of coordinates associated with them
-    private HashMap<UUID, List<Coordinate>> coordinatesHash;
+    private final HashMap<UUID, List<Coordinate>> coordinatesHash;
 
-    public BookManager(CoordinatesBookPlugin _plugin) {
+    public CoordinateManager(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
         this.coordinatesHash = new HashMap<>();
-    }
-
-    public HashMap<UUID, List<Coordinate>> getCoordinates() {
-        return this.coordinatesHash;
-    }
-
-    public void addCoordinates(UUID _playerUUID, List<Coordinate> _coordinates) {
-        this.coordinatesHash.put(_playerUUID, _coordinates);
     }
 
     public List<Coordinate> getCoordinates(Player _player) {
@@ -50,13 +42,7 @@ public class BookManager
         }
     }
 
-    // Adds a coordinate to a player's book
-//    public boolean addCoordinate(Player _player, Coordinate _coordinate) {
-//        UUID playerUUID = _player.getUniqueId();
-//        return addCoordinate(playerUUID,_coordinate);
-//    }
-
-    public boolean addCoordinate(UUID _playerUUID, Coordinate _coordinate) {
+    public void addCoordinate(UUID _playerUUID, Coordinate _coordinate) {
         List<Coordinate> coordinateList = (this.coordinatesHash.containsKey(_playerUUID))
             ? this.coordinatesHash.get(_playerUUID)
             : new ArrayList<>();
@@ -64,7 +50,7 @@ public class BookManager
         if(!coordinateList.contains(_coordinate))
         {
             if(coordinateList.size() >= 10)
-                return false;
+                return;
 
             coordinateList.add(_coordinate);
             this.coordinatesHash.put(_playerUUID, coordinateList);
@@ -72,12 +58,9 @@ public class BookManager
 					try {
 						this.plugin.getDatabase().addPlayerToCoordinate(_playerUUID, _coordinate);
 					} catch (SQLException e) {
-						throw new RuntimeException(e);
+						plugin.getLogger().warning("Failed to add player to coordinate");
 					}
-					return true;
         }
-
-        return false;
     }
 
     public boolean createCoordinate(UUID _playerUUID, Coordinate _coordinate) {
@@ -134,22 +117,6 @@ public class BookManager
         }
     }
 
-    // Removes a coordinate from a player's book
-    public boolean removeCoordinate(Player _player, Coordinate _coordinate) {
-        UUID playerUUID = _player.getUniqueId();
-        if (this.coordinatesHash.containsKey(playerUUID)) {
-            List<Coordinate> coordinates = this.coordinatesHash.get(playerUUID);
-            coordinates.remove(_coordinate);
-				    try {
-                plugin.getDatabase().removeCoordinate(playerUUID, _coordinate);
-            } catch (SQLException e) {
-                e.printStackTrace();
-                return false;
-            }
-				}
-        return true;
-    }
-
     // Retrieves a coordinate from its description
     public Coordinate getCoordinateByDescription(Player _player, String _description) {
         if(this.coordinatesHash.containsKey(_player.getUniqueId())) {
@@ -200,9 +167,6 @@ public class BookManager
         return true;
     }
 
-
-    //PRIVATE METHODS
-
     //Create book meta: https://www.spigotmc.org/wiki/interactive-books/#creating-the-book
     private ItemStack createBook(Player player)
     {
@@ -219,10 +183,12 @@ public class BookManager
             pages.add(page.create());
         }
 
-        bookMeta.spigot().setPages(pages);
-        bookMeta.setAuthor(player.getDisplayName());
-        bookMeta.setTitle("Coordinates Book");
-        book.setItemMeta(bookMeta);
+        if(bookMeta != null) {
+            bookMeta.spigot().setPages(pages);
+            bookMeta.setAuthor(player.getDisplayName());
+            bookMeta.setTitle("Coordinates Book");
+            book.setItemMeta(bookMeta);
+        }
 
         return book;
     }

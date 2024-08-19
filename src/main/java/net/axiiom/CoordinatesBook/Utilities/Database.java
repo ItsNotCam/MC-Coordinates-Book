@@ -2,6 +2,7 @@ package net.axiiom.CoordinatesBook.Utilities;
 
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
 import net.axiiom.CoordinatesBook.Coordinate;
+import org.bukkit.entity.Player;
 
 import java.io.*;
 import java.sql.*;
@@ -9,8 +10,8 @@ import java.util.*;
 
 public class Database
 {
-    private String DB_PATH = "";
-    private String INIT_DB_FILE = "";
+    private final String DB_PATH;
+    private final String INIT_DB_FILE;
 
     private final CoordinatesBookPlugin plugin;
     private Connection connection;
@@ -23,7 +24,7 @@ public class Database
         this.INIT_DB_FILE = env.get("INIT_DB_FILENAME");
 		}
 
-    public boolean connect() {
+    public void connect() {
         try {
             Class.forName("org.sqlite.JDBC");
             this.connection = DriverManager.getConnection(DB_PATH);
@@ -33,6 +34,11 @@ public class Database
 
             Statement statement = this.connection.createStatement();
             InputStream inputStream = getClass().getClassLoader().getResourceAsStream(INIT_DB_FILE);
+            if(inputStream == null) {
+                this.plugin.getLogger().severe("Failed to open init.db file");
+                return;
+            }
+
             try (BufferedReader br = new BufferedReader(new InputStreamReader(inputStream))) {
                 StringBuilder sb = new StringBuilder();
                 String line;
@@ -52,17 +58,13 @@ public class Database
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
             this.plugin.getLogger().severe("Failed to find JDBC driver");
-            return false;
         } catch (SQLException e) {
             e.printStackTrace();
             this.plugin.getLogger().severe("Failed to connect to database");
-            return false;
         } catch (IOException e) {
             e.printStackTrace();
             this.plugin.getLogger().severe("Failed to open init.db file");
-            return false;
         }
-        return true;
     }
 
     public void close() {
@@ -74,8 +76,8 @@ public class Database
 
     // Pulls the information within the database and stores it in memory for fast lookups
     public List<Coordinate> getPlayerCoordinates(UUID _playerUUID) throws SQLException {
-        PreparedStatement statement = this.connection.prepareStatement("" +
-            "SELECT Coordinate.*, Coordinate_Users.NAME" +
+        PreparedStatement statement = this.connection.prepareStatement(
+            "SELECT Coordinate.*, Coordinate_Users.NAME " +
             "FROM Coordinate " +
             "INNER JOIN Coordinate_Users ON Coordinate.UUID = Coordinate_Users.COORDINATE_UUID " +
             "WHERE Coordinate_Users.PLAYER_UUID = ?"
@@ -110,14 +112,13 @@ public class Database
     public void createCoordinate(UUID _playerUUID, Coordinate _coordinate) throws SQLException {
         PreparedStatement statement = null;
         try {
-            String sql = "INSERT INTO Coordinate VALUES (?, ?, ?, ?, ?, ?);";
+            String sql = "INSERT INTO Coordinate VALUES (?, ?, ?, ?, ?);";
             statement = this.connection.prepareStatement(sql);
             statement.setString(1, _coordinate.getUuid());
             statement.setInt(2, _coordinate.getLocation().getBlockX());
             statement.setInt(3, _coordinate.getLocation().getBlockY());
             statement.setInt(4, _coordinate.getLocation().getBlockZ());
             statement.setString(5, Objects.requireNonNull(_coordinate.getLocation().getWorld()).getName());
-            statement.setString(6, _coordinate.getName());
 
             statement.execute();
             statement.close();
@@ -133,15 +134,14 @@ public class Database
     public void addPlayerToCoordinate(UUID _playerUUID, Coordinate _coordinate) throws SQLException {
         PreparedStatement statement = null;
         try {
-            String sql = "INSERT INTO Coordinate_Users VALUES (?, ?);";
-            plugin.getLogger().info("Preparing Statement: " + sql);
+            String sql = "INSERT INTO Coordinate_Users VALUES (?, ?, ?);";
 
             statement = this.connection.prepareStatement(sql);
             statement.setString(1, _playerUUID.toString());
             statement.setString(2, _coordinate.getUuid());
+            statement.setString(3, _coordinate.getName());
             statement.execute();
 
-            plugin.getLogger().info("Executing Statement: " + statement.toString());
             statement.close();
         } finally {
             if(statement != null && !statement.isClosed()) {
@@ -160,5 +160,23 @@ public class Database
         String name = _rs.getString(6);
 
         return new Coordinate(uuid, x,y,z,worldName,name);
+    }
+
+    public Coordinate getCoordinateFromUUID(Player player, String coordUUid) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("" +
+            "SELECT Coordinate.*, Coordinate_Users.Name " +
+            "FROM Coordinate " +
+            "INNER JOIN Coordinate_Users ON Coordinate.UUID = Coordinate_Users.COORDINATE_UUID " +
+            "WHERE PLAYER_UUID = ? AND COORDINATE_UUID = ?;"
+        );
+        statement.setString(1, player.getUniqueId().toString());
+        statement.setString(2, coordUUid);
+
+        ResultSet rs = statement.executeQuery();
+        if(rs.next()) {
+            return getCoordFromRS(rs);
+        }
+
+        return null;
     }
 }
