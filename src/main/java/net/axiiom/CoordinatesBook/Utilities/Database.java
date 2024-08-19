@@ -75,7 +75,7 @@ public class Database
     // Pulls the information within the database and stores it in memory for fast lookups
     public List<Coordinate> getPlayerCoordinates(UUID _playerUUID) throws SQLException {
         PreparedStatement statement = this.connection.prepareStatement("" +
-            "SELECT * " +
+            "SELECT Coordinate.*, Coordinate_Users.NAME" +
             "FROM Coordinate " +
             "INNER JOIN Coordinate_Users ON Coordinate.UUID = Coordinate_Users.COORDINATE_UUID " +
             "WHERE Coordinate_Users.PLAYER_UUID = ?"
@@ -153,11 +153,9 @@ public class Database
     // Generates a coordinate from an SQL response
     private Coordinate getCoordFromRS(ResultSet _rs) throws SQLException {
         String uuid = _rs.getString(1);
-
         int x = _rs.getInt(2);
         int y = _rs.getInt(3);
         int z = _rs.getInt(4);
-
         String worldName = _rs.getString(5);
         String name = _rs.getString(6);
 

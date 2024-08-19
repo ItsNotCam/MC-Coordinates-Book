@@ -21,12 +21,12 @@ import java.util.Arrays;
     Class that listens to player input on the inventory - used to share coordinates
  */
 public class ShareInventoryListener implements Listener {
-    private ArrayList<Integer> userIndexes;
-    private CoordinatesBookPlugin plugin;
+    private final ArrayList<Integer> userIndexes;
+    private final CoordinatesBookPlugin plugin;
 
     public ShareInventoryListener(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
-        this.userIndexes = new ArrayList(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
+        this.userIndexes = new ArrayList<>(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
     }
 
     // Runs when an item is clicked on in the player's inventory. Only runs functionality when the clicked inventory
@@ -41,6 +41,7 @@ public class ShareInventoryListener implements Listener {
             Inventory inventory = _event.getClickedInventory();
             Player player = (Player) _event.getWhoClicked();
 
+            assert inventory != null;
             if(!inventory.getType().equals(InventoryType.PLAYER))
             {
                 if(item.getType().equals(Material.PLAYER_HEAD)) {
@@ -53,11 +54,13 @@ public class ShareInventoryListener implements Listener {
                         inventory.setItem(openSlot, item);
                     }
                 }
-
-                if(item.getType().equals(Material.LIME_CONCRETE)) {
-
+                else if(item.getType().equals(Material.LIME_CONCRETE)) {
                     //creates coordinate from NBT data found in item | see CommandExecutor
                     Coordinate coordinate = getCoordFromItem(inventory.getItem(49));
+                    if(coordinate == null) {
+                        player.sendMessage("Error: Could not find coordinate");
+                        return;
+                    }
 
                     for(int i : userIndexes) {
                         ItemStack thisItem = inventory.getItem(i);
@@ -66,8 +69,7 @@ public class ShareInventoryListener implements Listener {
                             String targetPlayerName = skullMeta.getOwningPlayer().getName();
 
                             if(checkPlayerExists(player, targetPlayerName)) {
-                                //send message to player to share
-                                shareCoordinate(coordinate, Bukkit.getPlayer(targetPlayerName), player);
+                                sendShareCoordinateMessage(coordinate, Bukkit.getPlayer(targetPlayerName), player);
                             }
                         }
                     }
@@ -75,8 +77,6 @@ public class ShareInventoryListener implements Listener {
                     player.closeInventory();
                 }
             }
-
-
         }
     }
 
@@ -87,33 +87,32 @@ public class ShareInventoryListener implements Listener {
 
        The player simply clicks on "yes" or "no" to accept or deny the request
     */
-    private boolean shareCoordinate(Coordinate _coordinate, Player _targetPlayer, Player _sender) {
+    private void sendShareCoordinateMessage(Coordinate _coordinate, Player _targetPlayer, Player _sender) {
         plugin.commandExecutor.awaitingShareResponse.put(_targetPlayer.getUniqueId(), _coordinate);
         Location location = _coordinate.getLocation();
-        String coords = String.format("%s %s %s", location.getBlockX(), location.getBlockY(), location.getBlockZ());
+        String coords = String.format("%s/%s/%s", location.getBlockX(), location.getBlockY(), location.getBlockZ());
 
-
-        // i generated this from a website
-        String command = "tellraw " + _targetPlayer.getName() + " [\"\",{\"text\":\"" + _sender.getName() +
-            "\",\"color\":\"aqua\"},{\"text\":\" has sent you their coordinate: \",\"color\":\"none\"" +
-            ",\"bold\":false},{\"text\":\"" + coords + "\",\"color\":\"dark_aqua\"},{\"text\":\"\\nAdd" +
-            " to your coordinate book? \",\"color\":\"none\"},{\"text\":\"yes\",\"color\":\"green\"," +
-            "\"bold\":true,\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/receiveCoordinate\"}" +
-            ",\"hoverEvent\":{\"action\":\"show_text\",\"value\":{\"text\":\"\",\"extra\":[{\"text\":\"" +
-            "Add coordinate to your book?\",\"color\":\"aqua\"}]}}},{\"text\":\" / \",\"color\":\"none\"," +
-            "\"bold\":false},{\"text\":\"no\",\"color\":\"red\",\"bold\":true,\"clickEvent\":{\"action\":\"" +
-            "run_command\",\"value\":\"/denyCoordinate\"},\"hoverEvent\":{\"action\":\"show_text\",\"value\"" +
-            ":{\"text\":\"\",\"extra\":[{\"text\":\"Ignore this request\"}]}}}]";
+        String command = "tellraw " + _targetPlayer.getDisplayName() + String.format(" [\"\",{\"text\":\"%s \"," +
+            "\"color\":\"aqua\"},{\"text\":\"has send you their coordinate\\n\"},{\"text\":\"'%s'\",\"color\":\"gold\"}," +
+            "{\"text\":\" at \"},{\"text\":\"%s \",\"color\":\"gold\"},{\"text\":\"in the\",\"color\":\"white\"}," +
+            "{\"text\":\" %s\",\"color\":\"gold\"},{\"text\":\".\",\"color\":\"white\"}," +
+            "{\"text\":\"\\nAdd the coordinate to your book?\\nClick one: (\"},{\"text\":\"yes\",\"color\":\"green\"," +
+            "\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/receivecoordinate\"},\"hoverEvent\":" +
+            "{\"action\":\"show_text\",\"contents\":\"Receive\"}},{\"text\":\" \",\"color\":\"green\",\"clickEvent\":" +
+            "{\"action\":\"run_command\",\"value\":\"/receivecoordinate\"}},{\"text\":\"/ \"},{\"text\":\"no\"," +
+            "\"color\":\"red\",\"clickEvent\":{\"action\":\"run_command\",\"value\":\"/denycoordinate\"}," +
+            "\"hoverEvent\":{\"action\":\"show_text\",\"contents\":\"Ignore\"}},{\"text\":\")\"}]",
+            _sender.getName(), _coordinate.getName(), coords, _coordinate.getWorldName()
+        );
 
         Bukkit.dispatchCommand(_sender.getServer().getConsoleSender(), command);
-        return true;
     }
 
     // Gets the coordinate from the NBT Tags assigned to the item
     private Coordinate getCoordFromItem(ItemStack _book){
-        String coords = NBTWrapper.getNBTTag("coords", _book);
-        String worldName = NBTWrapper.getNBTTag("worldName",_book);
-        return new Coordinate(coords,worldName,"_received_");
+        String uuid = NBTWrapper.getNBTTag("uuid", _book);
+        plugin.getLogger().info("UUID: " + uuid);
+        return plugin.getBookManager().getCoordinateByUUID(uuid);
     }
 
     // Gets the first open slot in the player's currently open inventory

@@ -19,7 +19,8 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
     private ShareInventoryListener listener;
 
     public CommandExecutor commandExecutor;
-    public Database database;
+
+    Database database;
     BookManager bookManager;
 
     /*
@@ -58,8 +59,6 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         getConfig().options().copyDefaults(true);
         saveConfig();
 
-        //Initialize SQLite Database
-//        createDirectory();
         this.database = new Database(this);
         this.database.connect();
 
@@ -95,4 +94,21 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
 					command.setExecutor(commandExecutor);
 				}
     }
+
+    public Database getDatabase() {
+        return database;
+    }
+
+    public void setDatabase(Database database) {
+        this.database = database;
+    }
+
+    public BookManager getBookManager() {
+        return bookManager;
+    }
+
+    public void setBookManager(BookManager bookManager) {
+        this.bookManager = bookManager;
+    }
+
 }

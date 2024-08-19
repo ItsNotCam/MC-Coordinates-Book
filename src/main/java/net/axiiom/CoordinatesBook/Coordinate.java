@@ -78,6 +78,21 @@ public class Coordinate
         return uuid;
     }
 
+    public World getWorld() {
+        return world;
+    }
+
+    public String getWorldName() {
+        switch(world.getName()) {
+            case "world_nether":
+                return "Nether";
+            case "world_the_end":
+                return "End";
+            default:
+                return "Overworld";
+        }
+    }
+
     public void setUuid(String uuid) {
         this.uuid = uuid;
     }

@@ -72,12 +72,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean renameCoordinate(Player _player, String[] _args) {
         if(_args.length > 2) {
-            String description = _args[0];
-            String newDescription = _args[1];
-
-            // If the player has a coordinate with this description, change it
-            if(plugin.bookManager.hasCoordinate(_player, description)) {
-                return plugin.bookManager.changeDescription(_player, description, newDescription);
+            String uuid = _args[0];
+            if(plugin.bookManager.hasCoordinate(_player, uuid)) {
+                String newName = String.join(" ", Arrays.copyOfRange(_args, 1, _args.length));
+                return plugin.bookManager.changeCoordinateName(_player, uuid, newName);
             }
         }
 
@@ -92,13 +90,18 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean receive(Player _player) {
         if(awaitingShareResponse.containsKey(_player.getUniqueId())) {
-            plugin.bookManager.addCoordinate(_player,awaitingShareResponse.get(_player.getUniqueId()));
+            Coordinate coord = awaitingShareResponse.get(_player.getUniqueId());
+            plugin.getBookManager().addCoordinate(_player.getUniqueId(), new Coordinate(
+                coord.getLocation(), coord.getName()
+            ));
             awaitingShareResponse.remove(_player.getUniqueId());
 
-            _player.sendMessage(ChatColor.GREEN + "Saved Coordinate as: _received_");
-            _player.sendMessage("You can rename it by typing " + ChatColor.AQUA + "/coords" + ChatColor.WHITE + ", navigating to its page, and clicking "
-                + ChatColor.AQUA + "rename");
+            _player.sendMessage(ChatColor.GREEN + "Saved Coordinate as: " + coord.getName());
+//            _player.sendMessage("You can rename it by typing " + ChatColor.AQUA + "/coords" + ChatColor.WHITE + ", navigating to its page, and clicking "
+//                + ChatColor.AQUA + "rename");
             return true;
+        } else {
+            _player.sendMessage("No coordinate to receive");
         }
 
         return false;
@@ -113,7 +116,10 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
     private boolean deny(Player _player) {
         if(awaitingShareResponse.containsKey(_player.getUniqueId())) {
             awaitingShareResponse.remove(_player.getUniqueId());
+            _player.sendMessage(ChatColor.RED + "Coordinate denied");
             return true;
+        } else {
+            _player.sendMessage("No coordinate available");
         }
 
         return false;
@@ -229,13 +235,13 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean compassTarget(Player _player, String[] _args)
     {
-        if(_args.length == 5 && checkValidRequest(_player.getUniqueId(), _args[0]))
+        if(_args.length == 4)
         {
-            boolean sameWorld = _player.getWorld().getName().equals(_args[4]);
+            boolean sameWorld = _player.getWorld().getName().equals(_args[3]);
             if(sameWorld) {
-                int x = Integer.parseInt(_args[1]);
-                int y = Integer.parseInt(_args[2]);
-                int z = Integer.parseInt(_args[3]);
+                int x = Integer.parseInt(_args[0]);
+                int y = Integer.parseInt(_args[1]);
+                int z = Integer.parseInt(_args[2]);
                 _player.setCompassTarget(new Location(_player.getWorld(),x,y,z));
                 return true;
             }
@@ -293,14 +299,14 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean fastTravel(Player _player, String[] _args)
     {
-        if(_args.length == 5 && checkValidRequest(_player.getUniqueId(), _args[0]))
+        if(_args.length == 4)
         {
-            World world = this.plugin.getServer().getWorld(_args[4]);
+            World world = this.plugin.getServer().getWorld(_args[3]);
             if(world == null) return false;
 
-            int x = Integer.parseInt(_args[1]);
-            int y = Integer.parseInt(_args[2]);
-            int z = Integer.parseInt(_args[3]);
+            int x = Integer.parseInt(_args[0]);
+            int y = Integer.parseInt(_args[1]);
+            int z = Integer.parseInt(_args[2]);
             Location tpLocation = new Location(world, x, y, z);
 
             _player.teleport(tpLocation);

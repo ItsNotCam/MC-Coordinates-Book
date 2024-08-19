@@ -24,7 +24,6 @@ public class BookManager
 
     public BookManager(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
-
         this.coordinatesHash = new HashMap<>();
     }
 
@@ -41,7 +40,7 @@ public class BookManager
             return this.coordinatesHash.get(_player.getUniqueId());
         } else {
             try {
-                List<Coordinate> coordinates = this.plugin.database.getPlayerCoordinates(_player.getUniqueId());
+                List<Coordinate> coordinates = this.plugin.getDatabase().getPlayerCoordinates(_player.getUniqueId());
                 this.coordinatesHash.put(_player.getUniqueId(), coordinates);
                 return coordinates;
             } catch(SQLException e) {
@@ -52,15 +51,15 @@ public class BookManager
     }
 
     // Adds a coordinate to a player's book
-    public boolean addCoordinate(Player _player, Coordinate _coordinate) {
-        UUID playerUUID = _player.getUniqueId();
-        return addCoordinate(playerUUID,_coordinate);
-    }
+//    public boolean addCoordinate(Player _player, Coordinate _coordinate) {
+//        UUID playerUUID = _player.getUniqueId();
+//        return addCoordinate(playerUUID,_coordinate);
+//    }
 
     public boolean addCoordinate(UUID _playerUUID, Coordinate _coordinate) {
         List<Coordinate> coordinateList = (this.coordinatesHash.containsKey(_playerUUID))
-                ? this.coordinatesHash.get(_playerUUID)
-                : new ArrayList<>();
+            ? this.coordinatesHash.get(_playerUUID)
+            : new ArrayList<>();
 
         if(!coordinateList.contains(_coordinate))
         {
@@ -71,7 +70,7 @@ public class BookManager
             this.coordinatesHash.put(_playerUUID, coordinateList);
 
 					try {
-						this.plugin.database.addPlayerToCoordinate(_playerUUID, _coordinate);
+						this.plugin.getDatabase().addPlayerToCoordinate(_playerUUID, _coordinate);
 					} catch (SQLException e) {
 						throw new RuntimeException(e);
 					}
@@ -94,7 +93,7 @@ public class BookManager
             coordinateList.add(_coordinate);
             this.coordinatesHash.put(_playerUUID, coordinateList);
           try {
-            this.plugin.database.createCoordinate(_playerUUID, _coordinate);
+            this.plugin.getDatabase().createCoordinate(_playerUUID, _coordinate);
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -119,7 +118,7 @@ public class BookManager
             for (Coordinate coordinate : coordinates) {
                 if (coordinate.getUuid().equals(_uuid)) {
                     try {
-                        plugin.database.removeCoordinate(playerUUID, coordinate);
+                        plugin.getDatabase().removeCoordinate(playerUUID, coordinate);
                         coordinates.remove(coordinate);
                         if(coordinates.isEmpty()) {
                             this.coordinatesHash.remove(playerUUID);
@@ -142,7 +141,7 @@ public class BookManager
             List<Coordinate> coordinates = this.coordinatesHash.get(playerUUID);
             coordinates.remove(_coordinate);
 				    try {
-                plugin.database.removeCoordinate(playerUUID, _coordinate);
+                plugin.getDatabase().removeCoordinate(playerUUID, _coordinate);
             } catch (SQLException e) {
                 e.printStackTrace();
                 return false;
@@ -169,7 +168,7 @@ public class BookManager
         return getCoordinateByDescription(_player, _description) != null;
     }
 
-    public boolean changeDescription(Player _player, String _description, String _newDescription) {
+    public boolean changeCoordinateName(Player _player, String _description, String _newDescription) {
         Coordinate oldCoordinate = getCoordinateByDescription(_player, _description);
         if(oldCoordinate != null) {
             List<Coordinate> coordinateList = coordinatesHash.get(_player.getUniqueId());

@@ -11,7 +11,7 @@ public class NBTWrapper
 {
     public static void setNBTTag(String _key, String _value, ItemStack _itemStack)
     {
-        NBT.modifyComponents(_itemStack, nbt -> {
+        NBT.modify(_itemStack, nbt -> {
             nbt.setString(_key, _value);
         });
     }
@@ -19,7 +19,7 @@ public class NBTWrapper
     public static void setNBTTag(NBTTag tag, ItemStack _itemStack)
     {
         System.out.println(tag.toString());
-        NBT.modifyComponents(_itemStack, nbt -> {
+        NBT.modify(_itemStack, nbt -> {
             nbt.setString(tag.getKey(), (String) tag.getValue());
         });
     }

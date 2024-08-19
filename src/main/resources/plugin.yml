@@ -1,7 +1,7 @@
 name: CoordinatesBook
-version: 1
+version: 2
 main: net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin
-api-version: 1.20
+api-version: 1.21
 
 commands:
   coords:

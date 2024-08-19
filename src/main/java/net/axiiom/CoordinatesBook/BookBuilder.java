@@ -59,11 +59,15 @@ public class BookBuilder
 
         // Generates the command to share the coordinate with another player
         String shareCommand = String.format("/sharecoordinate %s", coordinateUuid);
-        String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "Share this coordinate";
+        String shareHover = ChatColor.BLUE + "" + ChatColor.BOLD + "SHARE this coordinate";
 
         // Generates the command to delete the coordinate
         String deleteCommand = String.format("/removecoordinate %s", coordinateUuid);
         String deleteHover = String.format(ChatColor.RED + "" + ChatColor.BOLD + "DELETE this coordinate");
+
+        // Generates the command to delete the coordinate
+        String renameCommand = String.format("/renamecoordinate %s", coordinateUuid);
+        String renameHover = String.format(ChatColor.GOLD + "" + ChatColor.BOLD + "RENAME this coordinate");
 
         // This is a Spigot API defined class that builds text with embedded commands
         ComponentBuilder page = new ComponentBuilder(coordNameTrunc + "\n\n");
@@ -73,6 +77,13 @@ public class BookBuilder
         .append(dimension + "\n").color(ChatColor.DARK_AQUA).create();
         page.append("Loc: ").color(ChatColor.BLACK)
           .append(location.replaceAll(" ","/") + "\n\n").color(ChatColor.DARK_AQUA).create();
+
+        // Adds the Delete command that is run when the user clicks the text
+        page.append("> ").bold(true).color(ChatColor.GRAY)
+          .event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, renameCommand))
+          .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(renameHover).create()))
+          .append("Rename\n").color(ChatColor.GOLD).bold(false)
+          .create();
 
         // Adds the Teleport command that is run when the user clicks the text
         page.append("> ").bold(true).color(ChatColor.GRAY)
@@ -103,7 +114,7 @@ public class BookBuilder
             .create();
 
         // This adds the "Go Back to Table of Contents" text to the bottom of the page
-        page.append("\n\n\n\n\n<- Table of Contents").color(ChatColor.DARK_GRAY).italic(true)
+        page.append("\n\n\n\n<- Table of Contents").color(ChatColor.DARK_GRAY).italic(true)
             .event(new ClickEvent(ClickEvent.Action.CHANGE_PAGE, 1 + ""))
             .event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
                     new ComponentBuilder(ChatColor.GRAY + "" + ChatColor.ITALIC
