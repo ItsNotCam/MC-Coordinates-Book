@@ -1,19 +1,19 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.CoordinatesBook.Coordinate;
+import net.axiiom.CoordinatesBook.Coordinate.Coordinate;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 
-import static net.axiiom.CoordinatesBook.Main.Commands.*;
+import static net.axiiom.CoordinatesBook.Book.BookActions.*;
 
 /*
     This class listens to the chat for any commands that match those declared in the plugin.
     When it receives a matching command, it will execute their corresponding functionality
  */
-public class CommandHandler implements org.bukkit.command.CommandExecutor
+public class CommandExecutor implements org.bukkit.command.CommandExecutor
 {
     private final CoordinatesBookPlugin plugin;
 
@@ -28,7 +28,7 @@ public class CommandHandler implements org.bukkit.command.CommandExecutor
     private final HashMap<UUID, Coordinate> awaitingShareResponse;
 
     // Initialize
-    public CommandHandler(CoordinatesBookPlugin _plugin) {
+    public CommandExecutor(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
         this.awaitingShareResponse = new HashMap<>();
     }

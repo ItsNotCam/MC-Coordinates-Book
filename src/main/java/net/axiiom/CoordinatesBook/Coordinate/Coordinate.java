@@ -1,4 +1,4 @@
-package net.axiiom.CoordinatesBook;
+package net.axiiom.CoordinatesBook.Coordinate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;

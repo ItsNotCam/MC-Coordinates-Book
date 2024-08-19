@@ -1,5 +1,6 @@
-package net.axiiom.CoordinatesBook;
+package net.axiiom.CoordinatesBook.Book;
 
+import net.axiiom.CoordinatesBook.Coordinate.Coordinate;
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;

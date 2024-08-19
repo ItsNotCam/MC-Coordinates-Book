@@ -15,10 +15,10 @@ import org.bukkit.inventory.meta.BookMeta;
 
 import java.util.Arrays;
 
-public class BookCloseListener implements Listener {
+public class BookListener implements Listener {
 	private final CoordinatesBookPlugin plugin;
 
-	public BookCloseListener(CoordinatesBookPlugin _plugin) {
+	public BookListener(CoordinatesBookPlugin _plugin) {
 		this.plugin = _plugin;
 	}
 

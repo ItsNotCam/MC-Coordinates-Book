@@ -1,6 +1,6 @@
 package net.axiiom.CoordinatesBook.Listeners;
 
-import net.axiiom.CoordinatesBook.Coordinate;
+import net.axiiom.CoordinatesBook.Coordinate.Coordinate;
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
 import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
 import org.bukkit.Bukkit;
@@ -22,11 +22,11 @@ import java.util.Arrays;
 /*
     Class that listens to player input on the inventory - used to share coordinates
  */
-public class ShareInventoryListener implements Listener {
+public class ShareListener implements Listener {
     private final ArrayList<Integer> possiblePlayerInventoryIndices;
     private final CoordinatesBookPlugin plugin;
 
-    public ShareInventoryListener(CoordinatesBookPlugin _plugin) {
+    public ShareListener(CoordinatesBookPlugin _plugin) {
         this.plugin = _plugin;
         this.possiblePlayerInventoryIndices = new ArrayList<>(
           Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48)

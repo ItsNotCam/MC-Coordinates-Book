@@ -1,7 +1,7 @@
 package net.axiiom.CoordinatesBook.Utilities;
 
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
-import net.axiiom.CoordinatesBook.Coordinate;
+import net.axiiom.CoordinatesBook.Coordinate.Coordinate;
 import org.bukkit.entity.Player;
 
 import java.io.*;

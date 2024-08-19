@@ -1,9 +1,9 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import net.axiiom.CoordinatesBook.CoordinateManager;
-import net.axiiom.CoordinatesBook.Listeners.BookCloseListener;
+import net.axiiom.CoordinatesBook.Coordinate.CoordinateManager;
+import net.axiiom.CoordinatesBook.Listeners.BookListener;
 import net.axiiom.CoordinatesBook.Utilities.Database;
-import net.axiiom.CoordinatesBook.Listeners.ShareInventoryListener;
+import net.axiiom.CoordinatesBook.Listeners.ShareListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -17,7 +17,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 //TODO: ADD ENDER DRAGON:
 // Custom Mob AI Guide -> https://www.spigotmc.org/threads/tutorial-creating-custom-entities-with-pathfindergoals.18519/
 public final class CoordinatesBookPlugin extends JavaPlugin {
-	  private CommandHandler commandHandler;
+	  private CommandExecutor commandExecutor;
     private Database database;
     private CoordinateManager coordinateManager;
 
@@ -64,8 +64,8 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         this.coordinateManager = new CoordinateManager(this);
 
         //initialize listeners
-        this.getServer().getPluginManager().registerEvents(new ShareInventoryListener(this), this);
-        this.getServer().getPluginManager().registerEvents(new BookCloseListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new ShareListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new BookListener(this), this);
     }
 
     /*
@@ -87,10 +87,10 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
             getCommand("denycoordinate")
         };
 
-        commandHandler = new CommandHandler(this);
+        commandExecutor = new CommandExecutor(this);
         for (PluginCommand command : commands) {
 					assert command != null;
-					command.setExecutor(commandHandler);
+					command.setExecutor(commandExecutor);
 				}
     }
 
@@ -102,7 +102,7 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         return coordinateManager;
     }
 
-    public CommandHandler getCommandHandler() {
-        return commandHandler;
+    public CommandExecutor getCommandHandler() {
+        return commandExecutor;
     }
 }

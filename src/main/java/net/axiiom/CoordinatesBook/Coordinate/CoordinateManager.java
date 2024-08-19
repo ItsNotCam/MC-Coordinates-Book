@@ -1,8 +1,8 @@
-package net.axiiom.CoordinatesBook;
+package net.axiiom.CoordinatesBook.Coordinate;
 
+import net.axiiom.CoordinatesBook.Book.BookBuilder;
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
 import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
 
 import org.bukkit.Material;
 
@@ -23,49 +23,43 @@ public class CoordinateManager
     private final HashMap<UUID, List<Coordinate>> playerCoordinateMap;
 
     public CoordinateManager(CoordinatesBookPlugin _plugin) {
-        this.plugin = _plugin;
-        this.playerCoordinateMap = new HashMap<>();
+        plugin = _plugin;
+        playerCoordinateMap = new HashMap<>();
     }
 
     public List<Coordinate> getCoordinates(Player _player) {
-        if(this.playerCoordinateMap.containsKey(_player.getUniqueId())) {
-            return this.playerCoordinateMap.get(_player.getUniqueId());
+        if(playerCoordinateMap.containsKey(_player.getUniqueId())) {
+            return playerCoordinateMap.get(_player.getUniqueId());
         } else {
             try {
-                final List<Coordinate> coordinates = this.plugin.getDatabase().getPlayerCoordinates(_player.getUniqueId());
-                this.playerCoordinateMap.put(_player.getUniqueId(), coordinates);
+                final List<Coordinate> coordinates = plugin.getDatabase().getPlayerCoordinates(_player.getUniqueId());
+                playerCoordinateMap.put(_player.getUniqueId(), coordinates);
                 return coordinates;
             } catch(SQLException e) {
                 e.printStackTrace();
-                return new ArrayList<>();
             }
         }
+        return new ArrayList<>();
     }
 
     public void addCoordinate(UUID _playerUUID, Coordinate _coordinate) {
-        List<Coordinate> coordinateList = (this.playerCoordinateMap.containsKey(_playerUUID))
-            ? this.playerCoordinateMap.get(_playerUUID)
-            : new ArrayList<>();
+        List<Coordinate> coordinateList = playerCoordinateMap.getOrDefault(_playerUUID, new ArrayList<>());
+        if(coordinateList.size() >= 10)
+            return;
 
-        if(!coordinateList.contains(_coordinate))
-        {
-            if(coordinateList.size() >= 10)
-                return;
+        coordinateList.add(_coordinate);
+        playerCoordinateMap.put(_playerUUID, coordinateList);
 
-            coordinateList.add(_coordinate);
-            this.playerCoordinateMap.put(_playerUUID, coordinateList);
-
-					try {
-						this.plugin.getDatabase().addPlayerToCoordinate(_playerUUID, _coordinate);
-					} catch (SQLException e) {
-						plugin.getLogger().warning("Failed to add player to coordinate");
-					}
-        }
+      try {
+        plugin.getDatabase().addPlayerToCoordinate(_playerUUID, _coordinate);
+      } catch (SQLException e) {
+        plugin.getLogger().warning("Failed to add player to coordinate");
+      }
     }
 
     public boolean createCoordinate(UUID _playerUUID, Coordinate _coordinate) {
-        List<Coordinate> coordinateList = (this.playerCoordinateMap.containsKey(_playerUUID))
-            ? this.playerCoordinateMap.get(_playerUUID)
+        List<Coordinate> coordinateList = (playerCoordinateMap.containsKey(_playerUUID))
+            ? playerCoordinateMap.get(_playerUUID)
             : new ArrayList<>();
 
         if(!coordinateList.contains(_coordinate))
@@ -74,9 +68,9 @@ public class CoordinateManager
                 return false;
 
             coordinateList.add(_coordinate);
-            this.playerCoordinateMap.put(_playerUUID, coordinateList);
+            playerCoordinateMap.put(_playerUUID, coordinateList);
           try {
-            this.plugin.getDatabase().createCoordinate(_playerUUID, _coordinate);
+            plugin.getDatabase().createCoordinate(_playerUUID, _coordinate);
           } catch (SQLException e) {
             throw new RuntimeException(e);
           }
@@ -88,7 +82,7 @@ public class CoordinateManager
     }
 
     public Coordinate getCoordinateByUUID(String _uuid) {
-			return this.playerCoordinateMap.values().stream()
+			return playerCoordinateMap.values().stream()
             .flatMap(List::stream)
             .filter(coordinate -> coordinate.getUuid().equals(_uuid))
             .findFirst()
@@ -96,11 +90,11 @@ public class CoordinateManager
     }
 
     public Coordinate getCoordinateByUUID(Player _player, String _uuid) {
-        if(!this.playerCoordinateMap.containsKey(_player.getUniqueId())) {
+        if(!playerCoordinateMap.containsKey(_player.getUniqueId())) {
             return null;
         }
 
-        Coordinate coordinate = this.playerCoordinateMap.get(_player.getUniqueId()).stream()
+        Coordinate coordinate = playerCoordinateMap.get(_player.getUniqueId()).stream()
             .filter(c -> c.getUuid().equals(_uuid))
             .findFirst()
             .orElse(null);
@@ -121,17 +115,17 @@ public class CoordinateManager
 
     public void removeCoordinate(Player _player, String _uuid) {
         UUID playerUUID = _player.getUniqueId();
-        if (this.playerCoordinateMap.containsKey(playerUUID)) {
-            List<Coordinate> coordinates = this.playerCoordinateMap.get(playerUUID);
+        if (playerCoordinateMap.containsKey(playerUUID)) {
+            List<Coordinate> coordinates = playerCoordinateMap.get(playerUUID);
             for (Coordinate coordinate : coordinates) {
                 if (coordinate.getUuid().equals(_uuid)) {
                     try {
                         plugin.getDatabase().removeCoordinate(playerUUID, coordinate);
                         coordinates.remove(coordinate);
                         if(coordinates.isEmpty()) {
-                            this.playerCoordinateMap.remove(playerUUID);
+                            playerCoordinateMap.remove(playerUUID);
                         } else {
-                            this.playerCoordinateMap.put(playerUUID, coordinates);
+                            playerCoordinateMap.put(playerUUID, coordinates);
                         }
                     } catch (SQLException e) {
                         e.printStackTrace();
@@ -165,7 +159,7 @@ public class CoordinateManager
     public boolean renameCoordinate(Player _player, String _coordinateUUID, String _newName) {
         try {
             plugin.getDatabase().renameCoordinate(_player, _coordinateUUID, _newName);
-            final List<Coordinate> coordinates = this.playerCoordinateMap.get(_player.getUniqueId());
+            final List<Coordinate> coordinates = playerCoordinateMap.get(_player.getUniqueId());
             for(Coordinate coordinate : coordinates) {
                 if(coordinate.getUuid().equals(_coordinateUUID)) {
                     coordinate.setName(_newName);
@@ -182,8 +176,13 @@ public class CoordinateManager
     }
 
     public boolean openBook(Player _player) {
+        List<Coordinate> coordinates = getCoordinates(_player);
+        if(coordinates.isEmpty()) {
+            return false;
+        }
+
         //Create book
-        ItemStack book = createBook(getCoordinates(_player));
+        ItemStack book = createBook(coordinates);
 
         //Open book
         final int slot = _player.getInventory().getHeldItemSlot();
