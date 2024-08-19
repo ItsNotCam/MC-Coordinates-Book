@@ -5,9 +5,6 @@ import net.axiiom.CoordinatesBook.Utilities.Database;
 import net.axiiom.CoordinatesBook.ShareInventoryListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.scheduler.BukkitRunnable;
-
-import java.io.File;
 
 /*
     This is the main class and entry point of the plugin.
@@ -19,7 +16,6 @@ import java.io.File;
 //TODO: ADD ENDER DRAGON:
 // Custom Mob AI Guide -> https://www.spigotmc.org/threads/tutorial-creating-custom-entities-with-pathfindergoals.18519/
 public final class CoordinatesBookPlugin extends JavaPlugin {
-    private AutoSave autoSave;
     private ShareInventoryListener listener;
 
     public CommandExecutor commandExecutor;
@@ -94,32 +90,9 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         };
 
         commandExecutor = new CommandExecutor(this);
-        for (PluginCommand command : commands)
-            command.setExecutor(commandExecutor);
-    }
-
-    //Helpers
-    /*
-        Create the directory required to set up the database and config files
-     */
-    private void createDirectory() {
-        final String PATH = "plugins/SkyeCoordBook";
-
-        File directory = new File(PATH);
-        if(!directory.exists())
-            directory.mkdirs();
-    }
-
-    //Private Classes
-    /*
-        Class used asynchronously to automatically commit changes to the database
-     */
-    private class AutoSave extends BukkitRunnable
-    {
-        @Override
-        public void run() {
-            database.commit();
-            getServer().getConsoleSender().sendMessage("[CoordinatesBookPlugin] Committed changes to Database");
-        }
+        for (PluginCommand command : commands) {
+					assert command != null;
+					command.setExecutor(commandExecutor);
+				}
     }
 }
