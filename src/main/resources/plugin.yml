@@ -13,6 +13,8 @@ commands:
     aliases: [savecoord, sc]
   removecoordinate:
     description: managed by coord book
+  renamecoordinate:
+    description: managed by coord book
   compasstarget:
     description: managed by coord book
   sharecoordinate:

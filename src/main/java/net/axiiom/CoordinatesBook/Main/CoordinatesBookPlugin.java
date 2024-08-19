@@ -1,8 +1,9 @@
 package net.axiiom.CoordinatesBook.Main;
 
 import net.axiiom.CoordinatesBook.CoordinateManager;
+import net.axiiom.CoordinatesBook.Listeners.BookCloseListener;
 import net.axiiom.CoordinatesBook.Utilities.Database;
-import net.axiiom.CoordinatesBook.ShareInventoryListener;
+import net.axiiom.CoordinatesBook.Listeners.ShareInventoryListener;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -64,8 +65,8 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
         this.coordinateManager = new CoordinateManager(this);
 
         //initialize listeners
-			ShareInventoryListener listener = new ShareInventoryListener(this);
-        this.getServer().getPluginManager().registerEvents(listener, this);
+        this.getServer().getPluginManager().registerEvents(new ShareInventoryListener(this), this);
+        this.getServer().getPluginManager().registerEvents(new BookCloseListener(this), this);
     }
 
     /*
@@ -80,6 +81,7 @@ public final class CoordinatesBookPlugin extends JavaPlugin {
             getCommand("savecoordinate"),
             getCommand("removecoordinate"),
             getCommand("compasstarget"),
+          getCommand("renamecoordinate"),
 
             getCommand("sharecoordinate"),
             getCommand("receivecoordinate"),

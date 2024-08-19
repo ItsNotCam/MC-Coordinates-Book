@@ -7,9 +7,11 @@ import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
+import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BookMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
 
@@ -48,24 +50,25 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
 
             Returns a boolean which represents whether the command executed successfully
         */
-        if(_sender instanceof Player)
-        {
+        if(!(_sender instanceof Player))
+            return false;
+
         Player player = (Player) _sender;
-					switch(_command.getName())
-            {
-                case "removecoordinate" :  return removeCoordinate(player,_args);
-                case "compasstarget"    :  return compassTarget(player, _args);
-                case "savecoordinate"   :  return createCoordinate(player,_args);
-                case "fasttravel"       :  return fastTravel(player, _args);
-                case "coords"           :  return openBook(player);
-                case "rename"           :  return renameCoordinate(player, _args);
-                case "sharecoordinate"  :  return share(player, _args);
-                case "receivecoordinate":  return receive(player);
-                case "denycoordinate"   :  return deny(player);
-            }
+        plugin.getLogger().info("Command: " + _command.getName());
+        switch(_command.getName())
+        {
+            case "removecoordinate" :  return removeCoordinate(player,_args);
+            case "compasstarget"    :  return compassTarget(player, _args);
+            case "savecoordinate"   :  return createCoordinate(player,_args);
+            case "fasttravel"       :  return fastTravel(player, _args);
+            case "coords"           :  return openBook(player);
+            case "renamecoordinate" :  return renameCoordinate(player, _args);
+            case "sharecoordinate"  :  return share(player, _args);
+            case "receivecoordinate":  return receive(player);
+            case "denycoordinate"   :  return deny(player);
         }
 
-        return false;
+        return true;
     }
 
     /*
@@ -73,14 +76,13 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         Takes in the old description and the new description and replaces it
      */
     private boolean renameCoordinate(Player _player, String[] _args) {
-        if(_args.length > 2) {
-            String uuid = _args[0];
-            String newName = String.join(" ", Arrays.copyOfRange(_args, 1, _args.length));
-            return plugin.getCoordinateManager().changeCoordinateName(_player, uuid, newName);
-        }
-
-        return false;
+        plugin.getLogger().info("Renaming coordinate " + _args[0]);
+        String coordinateUUID = _args[0];
+        giveWritableBook(_player, coordinateUUID);
+        return true;
     }
+
+
 
     /*
         This function is run when a player accepts a coordinate share request.
@@ -231,8 +233,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             String uuid = _args[0];
             plugin.getLogger().info(uuid);
             this.plugin.getCoordinateManager().removeCoordinate(_player, uuid);
-            this.plugin.getCoordinateManager().openBook(_player);
-
+//            this.plugin.getCoordinateManager().openBook(_player);
             return true;
         }
 
@@ -332,5 +333,70 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         }
 
         return opened;
+    }
+
+    public void giveWritableBook(Player _player, String coordinateUUID) {
+        String coordinateName = plugin.getCoordinateManager().getCoordinateByUUID(_player, coordinateUUID).getName();
+
+        // Create a writable book item stack
+        ItemStack book = new ItemStack(Material.WRITABLE_BOOK);
+
+        // Set NBT data or other necessary tags here
+        NBTWrapper.setNBTTag(new NBTTag("coordinateUUID", coordinateUUID), book);
+        NBTWrapper.setNBTTag(new NBTTag("signingPlayerUUID", coordinateUUID), book);
+        NBTWrapper.setNBTTag(new NBTTag("coordinateName", coordinateName), book);
+
+        // Get the BookMeta and add pages
+        BookMeta meta = (BookMeta) book.getItemMeta();
+        if (meta != null) {
+            meta.setDisplayName(ChatColor.ITALIC + "" + ChatColor.BLUE + "Rename coordinate '" + coordinateName + "'");
+            meta.addPage("" +
+                "You are renaming '" + ChatColor.BLUE + coordinateName + ChatColor.BLACK + "'.\n\n" +
+                "Set its name by signing the title of this book.\n" +
+                "1. Click " + ChatColor.BLUE + "'Sign'" + ChatColor.BLACK + "\n" +
+                "2. Type a new name.\n" +
+                "3. Click " + ChatColor.BLUE + "'Sign and Close'"
+            );
+            book.setItemMeta(meta);
+        }
+
+        // Get the player's inventory and the currently held item
+        Inventory inventory = _player.getInventory();
+        int slot = _player.getInventory().getHeldItemSlot();
+        ItemStack heldItem = inventory.getItem(slot);
+
+        // Check if the player's inventory has room for the currently held item
+        if (heldItem != null && !heldItem.getType().equals(Material.AIR)) {
+            int emptySlot = inventory.firstEmpty();
+            if (emptySlot == -1) {
+                // Inventory is full, notify the player
+                _player.sendMessage("Please free up an inventory slot and try again.");
+                return;
+            } else {
+                // Move the currently held item to the empty slot
+                inventory.setItem(emptySlot, heldItem);
+            }
+        }
+
+        // Place the writable book in the player's hand
+        inventory.setItem(slot, book);
+
+        // Notify the player
+        _player.sendMessage("You have received a writable book.\nPlease sign it with a new title to rename your coordinate.\n"
+          + ChatColor.BLUE + ChatColor.ITALIC + "This book will be deleted in 1 minute or when dropped.");
+
+        Bukkit.getScheduler().runTaskLater(plugin, () -> {
+            // remove all books with the 'coordinateUUID' NBT tag from the player's inventory
+            for (ItemStack item : inventory.getContents()) {
+                if (item != null && item.getType() == Material.WRITABLE_BOOK) {
+                    // remove only if the item has the 'coordinateUUID' NBT tag and it is the same as the one we just created
+                    String itemCoordinateUUID = NBTWrapper.getNBTTag("coordinateUUID", item);
+                    if (itemCoordinateUUID != null && itemCoordinateUUID.equals(coordinateUUID)) {
+                        _player.sendMessage(ChatColor.BLUE + "" + ChatColor.ITALIC + "Book was deleted.");
+                        inventory.remove(item);
+                    }
+                }
+            }
+        }, 20L * 60L);
     }
 }

@@ -179,4 +179,15 @@ public class Database
 
         return null;
     }
+
+    public void renameCoordinate(Player _player, String _cooordinateUUID, String _newName) throws SQLException {
+        PreparedStatement statement = this.connection.prepareStatement("" +
+          "UPDATE Coordinate_Users SET NAME = ? WHERE PLAYER_UUID = ? AND COORDINATE_UUID = ?"
+        );
+        statement.setString(1, _newName);
+        statement.setString(2, _player.getUniqueId().toString());
+        statement.setString(3, _cooordinateUUID);
+
+        statement.execute();
+		}
 }

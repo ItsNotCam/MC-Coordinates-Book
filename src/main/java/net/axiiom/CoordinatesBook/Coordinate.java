@@ -21,7 +21,6 @@ public class Coordinate
     private int y;
     private int z;
 
-
     // Construct coordinate from server location
     public Coordinate(Location _location, String _name) {
         this.world = _location.getWorld();
@@ -32,7 +31,6 @@ public class Coordinate
         this.uuid = UUID.randomUUID().toString();
     }
 
-    // Construct coordinate from inputted position
     public Coordinate(String _uuid, int _x, int _y, int _z, String _worldName, String _name) {
         this.uuid = _uuid;
         this.x = _x;
@@ -50,8 +48,8 @@ public class Coordinate
         return this.name;
     }
 
-    public void setName(String _description) {
-        this.name = _description;
+    public void setName(String _name) {
+        this.name = _name;
     }
 
     public String getUuid() {
@@ -60,31 +58,9 @@ public class Coordinate
 
     public String getWorldName() {
         switch(world.getName()) {
-            case "world_nether":
-                return "Nether";
-            case "world_the_end":
-                return "End";
-            default:
-                return "Overworld";
+            case "world_nether":  return "Nether";
+            case "world_the_end": return "End";
+            default: return "Overworld";
         }
-    }
-
-    // This can equal a Coordinate and Location object
-    @Override
-    public boolean equals(Object _obj) {
-        if(_obj instanceof Coordinate) {
-            Coordinate input = (Coordinate) _obj;
-            boolean sameCoords = input.x == this.x && input.y == this.y && input.z == this.z;
-            boolean sameWorld  = input.world.getName().equals(this.world.getName());
-            boolean sameDesc   = input.name.equals(this.name);
-
-            return sameCoords && sameDesc && sameWorld;
-        }
-
-        else if(_obj instanceof Location) {
-            return _obj.equals(this.getLocation());
-        }
-
-        return false;
     }
 }

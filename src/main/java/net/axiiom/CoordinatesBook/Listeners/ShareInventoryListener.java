@@ -1,5 +1,6 @@
-package net.axiiom.CoordinatesBook;
+package net.axiiom.CoordinatesBook.Listeners;
 
+import net.axiiom.CoordinatesBook.Coordinate;
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
 import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
 import org.bukkit.Bukkit;
