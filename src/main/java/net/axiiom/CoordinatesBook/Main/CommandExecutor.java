@@ -75,10 +75,8 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
     private boolean renameCoordinate(Player _player, String[] _args) {
         if(_args.length > 2) {
             String uuid = _args[0];
-            if(plugin.getCoordinateManager().hasCoordinate(_player, uuid)) {
-                String newName = String.join(" ", Arrays.copyOfRange(_args, 1, _args.length));
-                return plugin.getCoordinateManager().changeCoordinateName(_player, uuid, newName);
-            }
+            String newName = String.join(" ", Arrays.copyOfRange(_args, 1, _args.length));
+            return plugin.getCoordinateManager().changeCoordinateName(_player, uuid, newName);
         }
 
         return false;
@@ -99,8 +97,6 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             awaitingShareResponse.remove(_player.getUniqueId());
 
             _player.sendMessage(ChatColor.GREEN + "Saved Coordinate as: " + coord.getName());
-//            _player.sendMessage("You can rename it by typing " + ChatColor.AQUA + "/coords" + ChatColor.WHITE + ", navigating to its page, and clicking "
-//                + ChatColor.AQUA + "rename");
             return true;
         } else {
             _player.sendMessage("No coordinate to receive");
@@ -274,30 +270,28 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean createCoordinate(Player _player, String[] _args)
     {
-        if(_args.length > 0) {
-            /*
-                Gets the description given by the user.
-                Removes the leading and trailing brackets as well as the commas created by the Arrays.toString() method
-             */
-            String name = Arrays.toString(_args)
-                .substring(1, Arrays.toString(_args).length() - 1)
-                .replaceAll(",", "");
-
-            // Creates a new coordinate based on the player's current location and description
-            Coordinate coordinate = new Coordinate(_player.getLocation(), name);
-            boolean successful = this.plugin.getCoordinateManager().createCoordinate(_player.getUniqueId(), coordinate);
-
-            if(!successful) _player.sendMessage(ChatColor.RED + "You cannot store more than 10 coordinates");
-            else _player.sendMessage(ChatColor.GREEN + "Saved new coordinate!\n"
-                    + ChatColor.GRAY + "" + ChatColor.ITALIC + "Use: " + ChatColor.AQUA + "/coords"
-                    + ChatColor.GRAY + "" + ChatColor.ITALIC + " to view your saved coordinates");
-        } else {
+        if(_args.length < 1) {
             _player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC
-                    + "Usage: " + ChatColor.GOLD + "/savecoord <name>"
+                + "Usage: " + ChatColor.GOLD + "/savecoord <name>"
             );
+            return false;
         }
 
-        return _args.length > 0;
+        String name = String.join(" ", _args);
+
+        // Creates a new coordinate based on the player's current location and description
+        Coordinate coordinate = new Coordinate(_player.getLocation(), name);
+        boolean successful = this.plugin.getCoordinateManager().createCoordinate(_player.getUniqueId(), coordinate);
+
+        if(successful) {
+            _player.sendMessage(ChatColor.GREEN + "Saved new coordinate!\n"
+              + ChatColor.GRAY + "" + ChatColor.ITALIC + "Use: " + ChatColor.AQUA + "/coords"
+              + ChatColor.GRAY + "" + ChatColor.ITALIC + " to view your saved coordinates");
+        } else {
+            _player.sendMessage(ChatColor.RED + "Failed to create new coordinate");
+        }
+
+        return successful;
     }
 
     /*
@@ -312,21 +306,18 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean fastTravel(Player _player, String[] _args)
     {
-        if(_args.length == 4)
-        {
-            World world = this.plugin.getServer().getWorld(_args[3]);
-            if(world == null) return false;
-
-            int x = Integer.parseInt(_args[0]);
-            int y = Integer.parseInt(_args[1]);
-            int z = Integer.parseInt(_args[2]);
-            Location tpLocation = new Location(world, x, y, z);
-
-            _player.teleport(tpLocation);
-            return true;
+        if(_args.length != 4) {
+            return false;
         }
 
-        return false;
+        World world = this.plugin.getServer().getWorld(_args[3]);
+        int x = Integer.parseInt(_args[0]);
+        int y = Integer.parseInt(_args[1]);
+        int z = Integer.parseInt(_args[2]);
+        Location tpLocation = new Location(world, x, y, z);
+
+        _player.teleport(tpLocation);
+        return true;
     }
 
     /*

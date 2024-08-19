@@ -139,18 +139,16 @@ public class ShareInventoryListener implements Listener {
     }
 
     // Gets the first open slot in the player's currently open inventory
-    private int getFirstOpenSlot(Inventory _inventory, boolean _useUserIndexes) {
+    private int getFirstOpenSlot(Inventory _inventory, boolean _usePlayerInventory) {
         for(int invIdx = 0; invIdx < 54; invIdx++) {
             ItemStack thisItem = _inventory.getItem(invIdx);
             if(thisItem != null && !thisItem.getType().equals(Material.AIR)) {
                 continue;
             }
 
-            if(_useUserIndexes && possiblePlayerInventoryIndices.contains(invIdx)) {
-                return invIdx;
-            }
-
-            if (!_useUserIndexes && !possiblePlayerInventoryIndices.contains(invIdx)) {
+            boolean validPlayerIndex =_usePlayerInventory && possiblePlayerInventoryIndices.contains(invIdx);
+            boolean validNonPlayerIndex = !_usePlayerInventory && !possiblePlayerInventoryIndices.contains(invIdx);
+            if(validPlayerIndex || validNonPlayerIndex) {
                 return invIdx;
             }
         }

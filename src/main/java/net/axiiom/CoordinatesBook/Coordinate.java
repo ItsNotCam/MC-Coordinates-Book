@@ -33,16 +33,6 @@ public class Coordinate
     }
 
     // Construct coordinate from inputted position
-    public Coordinate(int _x, int _y, int _z, String _worldName, String _name) {
-        this.x = _x;
-        this.y = _y;
-        this.z = _z;
-        this.world = Bukkit.getWorld(_worldName);
-        this.name = _name;
-        this.uuid = UUID.randomUUID().toString();
-    }
-
-    // Construct coordinate from inputted position
     public Coordinate(String _uuid, int _x, int _y, int _z, String _worldName, String _name) {
         this.uuid = _uuid;
         this.x = _x;
@@ -50,16 +40,6 @@ public class Coordinate
         this.z = _z;
         this.world = Bukkit.getWorld(_worldName);
         this.name = _name;
-    }
-
-    public Coordinate(String coord, String _worldName, String _description) {
-        String[] coords = coord.split(" ");
-        this.x = Integer.parseInt(coords[0]);
-        this.y = Integer.parseInt(coords[1]);
-        this.z = Integer.parseInt(coords[2]);
-        this.world = Bukkit.getWorld(_worldName);
-        this.name = _description;
-        this.uuid = UUID.randomUUID().toString();
     }
 
     public Location getLocation() {
@@ -78,10 +58,6 @@ public class Coordinate
         return uuid;
     }
 
-    public World getWorld() {
-        return world;
-    }
-
     public String getWorldName() {
         switch(world.getName()) {
             case "world_nether":
@@ -91,10 +67,6 @@ public class Coordinate
             default:
                 return "Overworld";
         }
-    }
-
-    public void setUuid(String uuid) {
-        this.uuid = uuid;
     }
 
     // This can equal a Coordinate and Location object
