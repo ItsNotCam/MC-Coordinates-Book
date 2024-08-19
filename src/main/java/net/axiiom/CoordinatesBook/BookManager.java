@@ -1,11 +1,9 @@
-package net.axiiom.CoordinatesBook.features;
+package net.axiiom.CoordinatesBook;
 
 import net.axiiom.CoordinatesBook.Main.CoordinatesBookPlugin;
-import net.axiiom.CoordinatesBook.utilities.BookBuilder;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 
-import org.bukkit.Location;
 import org.bukkit.Material;
 
 import org.bukkit.craftbukkit.v1_21_R1.entity.CraftPlayer;
@@ -13,6 +11,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.BookMeta;
 
+import java.sql.SQLException;
 import java.util.*;
 
 // Class responsible for all of the book generation and modification
@@ -20,8 +19,6 @@ import java.util.*;
 public class BookManager
 {
     private CoordinatesBookPlugin plugin;
-    // Maps the UUID of the player to the UUID of the coordinate
-    private HashMap<UUID, UUID> validators;
     // Maps the UUID of the player to a list of coordinates associated with them
     private HashMap<UUID, List<Coordinate>> coordinatesHash;
 
@@ -29,16 +26,29 @@ public class BookManager
         this.plugin = _plugin;
 
         this.coordinatesHash = new HashMap<>();
-        this.validators = new HashMap<>();
-    }
-
-    // Validates that the player has a coordinate with this UUID in the buffer
-    public boolean isValidRequest(UUID _playerUUID, UUID _validUUID) {
-        return this.validators.containsKey(_playerUUID) && validators.get(_playerUUID).equals(_validUUID);
     }
 
     public HashMap<UUID, List<Coordinate>> getCoordinates() {
         return this.coordinatesHash;
+    }
+
+    public void addCoordinates(UUID _playerUUID, List<Coordinate> _coordinates) {
+        this.coordinatesHash.put(_playerUUID, _coordinates);
+    }
+
+    public List<Coordinate> getCoordinates(Player _player) {
+        if(this.coordinatesHash.containsKey(_player.getUniqueId())) {
+            return this.coordinatesHash.get(_player.getUniqueId());
+        } else {
+            try {
+                List<Coordinate> coordinates = this.plugin.database.getPlayerCoordinates(_player.getUniqueId());
+                this.coordinatesHash.put(_player.getUniqueId(), coordinates);
+                return coordinates;
+            } catch(SQLException e) {
+                e.printStackTrace();
+                return new ArrayList<>();
+            }
+        }
     }
 
     // Adds a coordinate to a player's book
@@ -59,33 +69,86 @@ public class BookManager
 
             coordinateList.add(_coordinate);
             this.coordinatesHash.put(_playerUUID, coordinateList);
-            this.plugin.database.addCoordinate(_playerUUID, _coordinate);
-            return true;
+
+					try {
+						this.plugin.database.addPlayerToCoordinate(_playerUUID, _coordinate);
+					} catch (SQLException e) {
+						throw new RuntimeException(e);
+					}
+					return true;
         }
 
         return false;
     }
 
-    // Removes a coordinate from a player's book
-    public void removeCoordinate(Player _player, Location _location) {
+    public boolean createCoordinate(UUID _playerUUID, Coordinate _coordinate) {
+        List<Coordinate> coordinateList = (this.coordinatesHash.containsKey(_playerUUID))
+                ? this.coordinatesHash.get(_playerUUID)
+                : new ArrayList<>();
+
+        if(!coordinateList.contains(_coordinate))
+        {
+            if(coordinateList.size() >= 10)
+                return false;
+
+            coordinateList.add(_coordinate);
+            this.coordinatesHash.put(_playerUUID, coordinateList);
+          try {
+            this.plugin.database.createCoordinate(_playerUUID, _coordinate);
+          } catch (SQLException e) {
+            throw new RuntimeException(e);
+          }
+          return true;
+        }
+
+        return false;
+    }
+
+    public Coordinate getCoordinateByUUID(String _uuid) {
+			return this.coordinatesHash.values().stream()
+            .flatMap(List::stream)
+            .filter(coordinate -> coordinate.getUuid().equals(_uuid))
+            .findFirst()
+            .orElse(null);
+    }
+
+    public void removeCoordinate(Player _player, String _uuid) {
         UUID playerUUID = _player.getUniqueId();
         if (this.coordinatesHash.containsKey(playerUUID)) {
             List<Coordinate> coordinates = this.coordinatesHash.get(playerUUID);
-
-            for (int i = 0; i < coordinates.size(); i++) {
-                if (coordinates.get(i).equals(_location)) {
-                    this.plugin.database.removeCoordinate(playerUUID, coordinates.get(i));
-                    coordinates.remove(i);
-                    break;
+            for (Coordinate coordinate : coordinates) {
+                if (coordinate.getUuid().equals(_uuid)) {
+                    try {
+                        plugin.database.removeCoordinate(playerUUID, coordinate);
+                        coordinates.remove(coordinate);
+                        if(coordinates.isEmpty()) {
+                            this.coordinatesHash.remove(playerUUID);
+                        } else {
+                            this.coordinatesHash.put(playerUUID, coordinates);
+                        }
+                    } catch (SQLException e) {
+                        e.printStackTrace();
+                    }
+                    return;
                 }
             }
-
-            if(coordinates.size() == 0) {
-                this.coordinatesHash.remove(playerUUID);
-            } else  {
-                this.coordinatesHash.put(playerUUID, coordinates);
-            }
         }
+    }
+
+    // Removes a coordinate from a player's book
+    public boolean removeCoordinate(Player _player, Coordinate _coordinate) {
+        UUID playerUUID = _player.getUniqueId();
+        if (this.coordinatesHash.containsKey(playerUUID)) {
+            List<Coordinate> coordinates = this.coordinatesHash.get(playerUUID);
+            coordinates.remove(_coordinate);
+				    try {
+                plugin.database.removeCoordinate(playerUUID, _coordinate);
+            } catch (SQLException e) {
+                e.printStackTrace();
+                return false;
+            }
+				}
+        return true;
     }
 
     // Retrieves a coordinate from its description
@@ -93,7 +156,7 @@ public class BookManager
         if(this.coordinatesHash.containsKey(_player.getUniqueId())) {
             List<Coordinate> coordinateList = this.coordinatesHash.get(_player.getUniqueId());
             for (Coordinate coordinate : coordinateList) {
-                if (coordinate.getDescription().equals(_description)) {
+                if (coordinate.getName().equals(_description)) {
                     return coordinate;
                 }
             }
@@ -112,7 +175,7 @@ public class BookManager
             List<Coordinate> coordinateList = coordinatesHash.get(_player.getUniqueId());
             for(Coordinate coord : coordinateList) {
                 if(coord.equals(oldCoordinate)) {
-                    coord.setDescription(_newDescription);
+                    coord.setName(_newDescription);
                     coordinatesHash.put(_player.getUniqueId(),coordinateList);
                     return true;
                 }
@@ -123,11 +186,6 @@ public class BookManager
     }
 
     public boolean openBook(Player _player) {
-        if (!this.coordinatesHash.containsKey(_player.getUniqueId()))
-            return false;
-
-        this.validators.put(_player.getUniqueId(),UUID.randomUUID());
-
         //Create book
         ItemStack book = createBook(_player);
 
@@ -136,7 +194,6 @@ public class BookManager
         ItemStack old = _player.getInventory().getItem(slot);
         _player.getInventory().setItem(slot, book);
 
-        // idk if this will work lol
         CraftPlayer craftPlayer = (CraftPlayer) _player;
         craftPlayer.openBook(book);
 
@@ -150,28 +207,24 @@ public class BookManager
     //Create book meta: https://www.spigotmc.org/wiki/interactive-books/#creating-the-book
     private ItemStack createBook(Player player)
     {
-        final UUID uuid = player.getUniqueId();
-        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
+        List<Coordinate> coordinateList = getCoordinates(player);
 
-        List<Coordinate> coordinateList = this.coordinatesHash.get(uuid);
+        ItemStack book = new ItemStack(Material.WRITTEN_BOOK);
         BookMeta bookMeta = (BookMeta) book.getItemMeta();
 
-        BookBuilder bb = new BookBuilder();
         List<BaseComponent[]> pages = new ArrayList<>();
+        pages.add(BookBuilder.getTableOfContents(coordinateList).create());
 
-        for(Coordinate coordinate : coordinateList)
-        {
-            String validatorUUID = this.validators.get(uuid).toString();
-            ComponentBuilder page = bb.buildCoordinatePage(coordinate, validatorUUID);
+        for(Coordinate coordinate : coordinateList)         {
+            ComponentBuilder page = BookBuilder.buildCoordinatePage(coordinate);
             pages.add(page.create());
         }
 
-        pages.add(0,bb.getTableOfContents().create());
         bookMeta.spigot().setPages(pages);
         bookMeta.setAuthor(player.getDisplayName());
         bookMeta.setTitle("Coordinates Book");
-
         book.setItemMeta(bookMeta);
+
         return book;
     }
 }

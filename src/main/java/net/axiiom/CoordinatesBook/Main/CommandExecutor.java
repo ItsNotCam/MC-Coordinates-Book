@@ -1,9 +1,8 @@
 package net.axiiom.CoordinatesBook.Main;
 
-import de.tr7zw.nbtapi.NBT;
-import net.axiiom.CoordinatesBook.features.Coordinate;
-import net.axiiom.CoordinatesBook.utilities.NBTTag;
-import net.axiiom.CoordinatesBook.utilities.NBTWrapper;
+import net.axiiom.CoordinatesBook.Coordinate;
+import net.axiiom.CoordinatesBook.Utilities.NBT.NBTTag;
+import net.axiiom.CoordinatesBook.Utilities.NBT.NBTWrapper;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.*;
 import org.bukkit.command.Command;
@@ -54,7 +53,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             {
                 case "removecoordinate" :  return removeCoordinate(player,_args);
                 case "compasstarget"    :  return compassTarget(player, _args);
-                case "savecoordinate"   :  return saveCoordinate(player,_args);
+                case "savecoordinate"   :  return createCoordinate(player,_args);
                 case "fasttravel"       :  return fastTravel(player, _args);
                 case "coords"           :  return openBook(player);
                 case "rename"           :  return renameCoordinate(player, _args);
@@ -132,15 +131,16 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         * Z coordinate component
      */
     private boolean share(Player _player, String[] _args) {
-        if(_args.length == 5 && checkValidRequest(_player.getUniqueId(), _args[0])) {
-            String validatorUUID = _args[0];
-            String worldName = _args[4];
-            String coords = String.format("%s %s %s", _args[1], _args[2], _args[3]);
+        if(_args.length == 1) {
+            String coordUUid = _args[0];
+//            Coordinate coordinate = plugin.bookManager.getCoordinateByUUID(coordUUid);
 
             // This creates a new array with all of the players except for the player sending the command
-            ArrayList<String> players = new ArrayList<>();
-            plugin.getServer().getOnlinePlayers().forEach(p -> players.add(p.getName()));
-            players.remove(_player.getName());
+//            List<String> players = plugin.getServer().getOnlinePlayers()
+//                .stream()
+//                .map(Player::getName)
+//                .filter(name -> !name.equals(_player.getName()))
+//                .toList();
 
             // this is the "large chest" inventory size
             int size = 54;
@@ -157,27 +157,31 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
                 Fill empty spaces with player heads.
                 When a player head is clicked, the coordinate is sent
              */
-            ArrayList<Integer> userIndexes = new ArrayList(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
-            for(int i = 0, playersIndex = 0; i < size && playersIndex < players.size(); i++) {
-                if(!userIndexes.contains(i) && !spacerSlots.contains(i)){
-                    ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
-                        SkullMeta skullMeta = (SkullMeta) playerHead.getItemMeta();
-                        skullMeta.setOwningPlayer(Bukkit.getPlayer(players.get(playersIndex)));
-                    playerHead.setItemMeta(skullMeta);
-                    shareInventory.setItem(i,playerHead);
+            Object[] players = plugin.getServer().getOnlinePlayers().toArray();
+            ArrayList<Integer> userIndexes = new ArrayList<>(Arrays.asList(0,1,2,3,9,10,11,12,18,19,20,21,27,28,29,30,36,37,38,39,45,46,47,48));
+            for(int i = 0, playersIndex = 0; i < size && playersIndex < players.length; i++) {
+//                if(players[playersIndex].equals(_player)) {
+//                    continue;
+//                }
 
+                if(!userIndexes.contains(i) && !spacerSlots.contains(i)) {
+                    Player player = (Player) players[playersIndex];
+                    ItemStack playerHead = new ItemStack(Material.PLAYER_HEAD);
+
+                    SkullMeta skullMeta = (SkullMeta) playerHead.getItemMeta();
+                    if(skullMeta == null) { continue; }
+                    skullMeta.setOwningPlayer(Bukkit.getPlayer(player.getUniqueId()));
+                    playerHead.setItemMeta(skullMeta);
+
+                    shareInventory.setItem(i,playerHead);
                     playersIndex++;
                 }
             }
 
             // Add item containing the coordinate and assign it to inventory slot 49
-            ItemStack coord = new ItemStack(Material.BOOK);
-            NBTWrapper.setNBTTags(new NBTTag[] {
-              new NBTTag("validatorUUID", validatorUUID),
-              new NBTTag("coords", coords),
-              new NBTTag("worldName", worldName)
-            }, coord);
-            shareInventory.setItem(49, coord);
+            ItemStack coordItem = new ItemStack(Material.BOOK);
+            NBTWrapper.setNBTTag(new NBTTag("uuid", coordUUid), coordItem);
+            shareInventory.setItem(49, coordItem);
 
             // fill remaining slots with nothing
             for(int i = 0; i < 54; i++) {
@@ -207,15 +211,11 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
      */
     private boolean removeCoordinate(Player _player, String[] _args)
     {
-        if(_args.length == 5 && checkValidRequest(_player.getUniqueId(), _args[0]))
+        if(_args.length == 1)
         {
-            World world = plugin.getServer().getWorld(_args[4]);
-            int x = Integer.parseInt(_args[1]);
-            int y = Integer.parseInt(_args[2]);
-            int z = Integer.parseInt(_args[3]);
-
-            Location location = new Location(world, x, y, z);
-            this.plugin.bookManager.removeCoordinate(_player,location);
+            String uuid = _args[0];
+            plugin.getLogger().info(uuid);
+            this.plugin.bookManager.removeCoordinate(_player, uuid);
             this.plugin.bookManager.openBook(_player);
 
             return true;
@@ -253,20 +253,20 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
 
         Takes in 1 or more arguments that are used as the name of the coordinate
      */
-    private boolean saveCoordinate(Player _player, String[] _args)
+    private boolean createCoordinate(Player _player, String[] _args)
     {
         if(_args.length > 0) {
             /*
                 Gets the description given by the user.
                 Removes the leading and trailing brackets as well as the commas created by the Arrays.toString() method
              */
-            String description = Arrays.toString(_args)
-                    .substring(1, Arrays.toString(_args).length() - 1)
-                    .replaceAll(",", "");
+            String name = Arrays.toString(_args)
+                .substring(1, Arrays.toString(_args).length() - 1)
+                .replaceAll(",", "");
 
             // Creates a new coordinate based on the player's current location and description
-            Coordinate coordinate = new Coordinate(_player.getLocation(), description);
-            boolean successful = this.plugin.bookManager.addCoordinate(_player, coordinate);
+            Coordinate coordinate = new Coordinate(_player.getLocation(), name);
+            boolean successful = this.plugin.bookManager.createCoordinate(_player.getUniqueId(), coordinate);
 
             if(!successful) _player.sendMessage(ChatColor.RED + "You cannot store more than 10 coordinates");
             else _player.sendMessage(ChatColor.GREEN + "Saved new coordinate!\n"
@@ -315,15 +315,13 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
         it on the client side
      */
     private boolean openBook(Player _player) {
-        HashMap<UUID, List<Coordinate>> coords = this.plugin.bookManager.getCoordinates();
-        if(coords.containsKey(_player.getUniqueId()) && coords.get(_player.getUniqueId()).size() > 0) {
-            System.out.println("Found player and opening book...");
-            return this.plugin.bookManager.openBook(_player);
+        final boolean opened = this.plugin.bookManager.openBook(_player);
+        if(!opened) {
+            _player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "First save a " +
+                "location with" + ChatColor.GOLD + " /savecoord ");
         }
 
-        _player.sendMessage(ChatColor.RED + "" + ChatColor.ITALIC + "First save a " +
-                "location with" + ChatColor.GOLD + " /savecoord ");
-        return true;
+        return opened;
     }
 
     // Helper
@@ -338,6 +336,7 @@ public class CommandExecutor implements org.bukkit.command.CommandExecutor
             return false;
         }
 
-        return this.plugin.bookManager.isValidRequest(_player, validatorUUID);
+//        return this.plugin.bookManager.isValidRequest(_player, validatorUUID);
+    return true;
     }
 }

@@ -1,4 +1,4 @@
-package net.axiiom.CoordinatesBook.utilities;
+package net.axiiom.CoordinatesBook.Utilities.NBT;
 
 public class NBTTag {
     public String key;
@@ -25,4 +25,8 @@ public class NBTTag {
         this.value = value;
     }
 
+    @Override
+    public String toString() {
+        return key + " | (" + value.getClass().toString().replace("class ", "") + ") " + value.toString();
+    }
 }
