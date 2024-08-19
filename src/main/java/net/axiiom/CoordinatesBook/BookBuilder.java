@@ -14,22 +14,6 @@ import java.util.Objects;
  */
 public class BookBuilder
 {
-    static String getFriendlyWorldName(String _worldName) {
-        // Get the dimension of the world
-//        String friendlyName = "";
-//        String regex = "^[^a-zA-Z]+(?<first>\\w)(?<text>\\w*)";
-//        Pattern pattern = Pattern.compile(regex);
-//        Matcher matcher = pattern.matcher(_worldName);
-//        if(matcher.find()) {
-//            MatchResult mr = matcher.toMatchResult();
-//            mr.m
-//            friendlyName = matcher.group("first").toUpperCase() + matcher.group("text");
-//        }
-        if(_worldName.contains("nether")) return "Nether";
-        if(_worldName.contains("end")) return "The End";
-        return "Overworld";
-    }
-
     // Builds a page cooresponding to an inputted coordinate
     public static ComponentBuilder buildCoordinatePage(Coordinate _coordinate)
     {
@@ -37,7 +21,7 @@ public class BookBuilder
         String coordinateUuid = _coordinate.getUuid();
         Location coordinateLocation = _coordinate.getLocation();
         String worldName = Objects.requireNonNull(coordinateLocation.getWorld()).getName();
-        String dimension = getFriendlyWorldName(worldName);
+        String dimension = _coordinate.getWorldName();
         String location = coordinateLocation.getBlockX() + " " + coordinateLocation.getBlockY() + " " + coordinateLocation.getBlockZ();
 
         /*
