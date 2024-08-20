@@ -32,12 +32,12 @@ When using this plugin you can:
 * The Spigot SDK is a third party SDK that allows developers to easily create their own addons and plugins. 
 
 
-**NoSQL**
+**SQLite**
 
 * **Not every server owner** has access to a traditional cloud-based database, or even full access to the physical server that they run their world on. 
-* I had to make use of NoSQL, as it **only relies on a local database file**, rather than a dedicated database application - **this makes it perfect for all users**.
+* I had to make use of SQLite, as it **only relies on a local database file**, rather than a dedicated database application - **this makes it perfect for all users**.
 
 ## What I Learned
 In making this project, **I learned a lot about Java**. Prior to making this plugin, I was not a big fan of Java and upon seeing that I *had* to use Java, I was a bit put off. But after creating this I can say that **I actually really enjoyed working with Java** :)
 
-Additionally, **I learned about NoSQL databases**. This was my **first exposure to databases**, and I taught myself the fundamentals.
+Additionally, **I learned about SQLite databases**. This was my **first exposure to databases**, and I taught myself the fundamentals.
