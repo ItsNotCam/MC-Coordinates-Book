@@ -1,4 +1,4 @@
-# Minecraft 'Coordinates Book' Mod
+# 📦 Minecraft 'Coordinates Book' Mod
 
 ![image](https://github.com/ItsNotCam/MC-Coordinates-Book/assets/46014191/bc39f9a3-2ee5-4501-ae85-6be18907bd68)
 
